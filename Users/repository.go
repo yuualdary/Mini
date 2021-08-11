@@ -10,9 +10,9 @@ import (
 type Repository interface {
 	SaveUser(user models.Users) (models.Users, error)
 	FindUserEmail(email string) (models.Users, error)
-	FindUserById(ID int) (models.Users, error)
+	FindUserById(ID string) (models.Users, error)
 	SaveOTP(otp models.Otps) (models.Otps, error)
-	GetUserOtp(UserID int) (models.Otps, error)
+	GetUserOtp(UserID string) (models.Otps, error)
 	UpdateUser(users models.Users) (models.Users, error)
 	UpdateOTP(otp models.Otps) (models.Otps, error)
 }
@@ -51,7 +51,7 @@ func (r *repository) FindUserEmail(email string) (models.Users, error) {
 	return User, nil
 
 }
-func (r *repository) FindUserById(ID int) (models.Users, error) {
+func (r *repository) FindUserById(ID string) (models.Users, error) {
 
 	var User models.Users
 
@@ -107,7 +107,7 @@ func (r *repository) UpdateUser(users models.Users) (models.Users, error) {
 	return users, nil
 }
 
-func (r *repository) GetUserOtp(UserID int) (models.Otps, error) {
+func (r *repository) GetUserOtp(UserID string) (models.Otps, error) {
 
 	var Otp models.Otps
 	err := r.db.Where("users_id = ?", UserID).Find(&Otp).Error

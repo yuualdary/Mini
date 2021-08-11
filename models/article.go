@@ -1,14 +1,14 @@
 package models
 
-import "gorm.io/gorm"
-
 type Article struct {
-	gorm.Model
-	Title string 
-	Slug string
-	CategoryID int 
-	Categories Category  `gorm:"foreignKey:CategoryID"`
-	Content string
-	
+	ID string `gorm:"primary_key"`
 
+	Title      string
+	Slug       string
+	CategoryID string
+	Categories Category `gorm:"foreignKey:CategoryID"`
+	Content    string
+}
+
+type ArticleToCategory struct {
 }

@@ -2,7 +2,7 @@ package company
 
 import (
 	"errors"
-	"pasarwarga/Users"
+	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 )
 
@@ -14,20 +14,30 @@ type Service interface {
 }
 
 type service struct {
-	repository     Repository
-	UserRepository Users.Repository
+	repository Repository
 }
 
-func NewService(repository Repository, UserRepository Users.Repository) *service {
-	return &service{repository, UserRepository}
+func NewService(repository Repository) *service {
+	return &service{repository}
 }
 
 func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error) {
 
-	CreateCompany := models.Company{}
+	IsUserGetCompany, err := s.repository.FindCompanyOwner(input.User.ID)
 
+	if err != nil {
+		return IsUserGetCompany, err
+	}
+
+	if IsUserGetCompany.Users.ID != "" {
+		return IsUserGetCompany, errors.New("You already have a company")
+	}
+
+	CreateCompany := models.Company{}
+	CreateCompany.ID = generatornumber.NewUUID()
 	CreateCompany.CompanyName = input.CompanyName
 	CreateCompany.CompanyDescription = input.CompanyDescription
+	CreateCompany.UserID = IsUserGetCompany.UserID
 
 	Save, err := s.repository.CreateCompany(CreateCompany)
 
@@ -35,39 +45,28 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 		return Save, err
 	}
 
-	IsUserGetCompany, err := s.UserRepository.FindUserById(int(input.User.ID))
-
-	if err != nil {
-		return IsUserGetCompany.Companies, err
-	}
-
-	if IsUserGetCompany.CompanyID != 0 {
-		return IsUserGetCompany.Companies, errors.New("You already have a company")
-	}
-
-	IsUserGetCompany.CompanyID = int(input.User.ID)
-	UpdateUser, err := s.UserRepository.UpdateUser(IsUserGetCompany)
-
-	if err != nil {
-		return UpdateUser.Companies, err
-	}
-
-	return UpdateUser.Companies, nil
+	return Save, nil
 
 }
 
 func (s *service) UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error) {
 
-	IsUserGetCompany, err := s.UserRepository.FindUserById(int(input.User.ID))
+	IsUserGetCompany, err := s.repository.FindCompanyOwner(input.User.ID)
 
 	if err != nil {
-		return IsUserGetCompany.Companies, err
+		return IsUserGetCompany, err
 	}
 
-	if IsUserGetCompany.CompanyID != int(input.User.ID) {
-		return IsUserGetCompany.Companies, errors.New("Cannot Update Company")
+	if IsUserGetCompany.UserID != input.User.ID {
+		return IsUserGetCompany, errors.New("Cannot Update Company")
 	}
+
 	UpdateCompany, err := s.repository.FindCompanyID(inputid.ID)
+	if err != nil {
+
+		return UpdateCompany, err
+	}
+
 	UpdateCompany.CompanyName = input.CompanyName
 	UpdateCompany.CompanyDescription = input.CompanyDescription
 
@@ -90,4 +89,14 @@ func (s *service) DetailCompany(inputid CompanyFindIDInput) (models.Company, err
 
 	return FindID, nil
 
+}
+func (s *service) ListCompany() ([]models.Company, error) {
+
+	ListCompany, err := s.repository.ListCompany()
+
+	if err != nil {
+		return ListCompany, err
+	}
+
+	return ListCompany, nil
 }

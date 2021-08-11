@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 	"strconv"
 	"strings"
@@ -14,12 +15,12 @@ import (
 
 type Service interface {
 	RegisterUser(input RegisterInput) (models.Users, error)
-	SaveAvatar(ID int, filelocatiion string) (models.Users, error)
+	SaveAvatar(ID string, filelocatiion string) (models.Users, error)
 	LoginUser(input LoginInput) (models.Users, error)
-	GetUserById(ID int) (models.Users, error)
-	ResendOTP(ID int) (models.Otps, error)
-	//	CheckOTP(input OtpInput) (models.Otps, error)
-	CreateOtp(UserID int) (models.Otps, error)
+	GetUserById(ID string) (models.Users, error)
+	ResendOTP(ID string) (models.Otps, error)
+	CreateOtp(UserID string) (models.Otps, error)
+	CheckOTP(input OtpInput) (models.Otps, error)
 }
 
 type service struct {
@@ -29,9 +30,10 @@ type service struct {
 func NewService(repository Repository) *service {
 	return &service{repository}
 }
-func (s *service) CreateOtp(UserID int) (models.Otps, error) {
+func (s *service) CreateOtp(UserID string) (models.Otps, error) {
 
 	Otp := models.Otps{}
+	Otp.ID = generatornumber.NewUUID()
 	Otp.UsersID = UserID
 	Otp.Value = rand.Intn(10000)
 	Otp.Expired = time.Now().Local().Add(time.Minute * 5)
@@ -46,6 +48,7 @@ func (s *service) CreateOtp(UserID int) (models.Otps, error) {
 func (s *service) RegisterUser(input RegisterInput) (models.Users, error) {
 
 	User := models.Users{}
+	User.ID = generatornumber.NewUUID()
 	User.Name = input.Name
 	User.Email = input.Email
 	User.Bod = input.BOD
@@ -73,7 +76,7 @@ func (s *service) RegisterUser(input RegisterInput) (models.Users, error) {
 
 	}
 
-	if CheckMail.ID != 0 {
+	if CheckMail.ID != "" {
 
 		return CheckMail, errors.New("Email Already Used")
 	}
@@ -85,7 +88,7 @@ func (s *service) RegisterUser(input RegisterInput) (models.Users, error) {
 		return NewUser, err
 	}
 
-	_, err = s.CreateOtp(int(NewUser.ID))
+	_, err = s.CreateOtp(NewUser.ID)
 
 	if err != nil {
 		return NewUser, err
@@ -109,7 +112,7 @@ func (s *service) LoginUser(input LoginInput) (models.Users, error) {
 		return GetDataUser, err
 	}
 
-	if GetDataUser.ID == 0 {
+	if GetDataUser.ID == "" {
 
 		return GetDataUser, errors.New("Email Not Found")
 	}
@@ -126,7 +129,7 @@ func (s *service) LoginUser(input LoginInput) (models.Users, error) {
 
 	return GetDataUser, nil
 }
-func (s *service) SaveAvatar(ID int, filelocatiion string) (models.Users, error) {
+func (s *service) SaveAvatar(ID string, filelocatiion string) (models.Users, error) {
 
 	//check id
 
@@ -148,7 +151,7 @@ func (s *service) SaveAvatar(ID int, filelocatiion string) (models.Users, error)
 	return Update, nil
 
 }
-func (s *service) GetUserById(ID int) (models.Users, error) {
+func (s *service) GetUserById(ID string) (models.Users, error) {
 
 	user, err := s.repository.FindUserById(ID)
 
@@ -156,13 +159,13 @@ func (s *service) GetUserById(ID int) (models.Users, error) {
 		return user, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == "" {
 		return user, errors.New("No user found")
 	}
 	return user, nil
 }
 
-func (s *service) ResendOTP(ID int) (models.Otps, error) {
+func (s *service) ResendOTP(ID string) (models.Otps, error) {
 
 	//CheckExpired, err := s.repository.GetUserOtp(ID)
 	GetCurrentDateTime := time.Now().Local()
@@ -243,3 +246,43 @@ func (s *service) ResendOTP(ID int) (models.Otps, error) {
 // 	return GetOtp, nil
 
 // }
+
+func (s *service) CheckOTP(input OtpInput) (models.Otps, error) {
+
+	fmt.Println(input.User.ID)
+	GetOtp, err := s.repository.GetUserOtp(input.User.ID)
+	GetCurrentDateTime := time.Now().Local()
+
+	if err != nil {
+		return GetOtp, errors.New("not authorized")
+	}
+
+	if input.Otp != GetOtp.Value {
+		fmt.Println(GetOtp.Value, input.Otp)
+		return GetOtp, errors.New("your otp not valid")
+	}
+
+	if GetCurrentDateTime.After(GetOtp.Expired) {
+
+		return GetOtp, errors.New("your OTP has been expired")
+
+	}
+
+	fmt.Printf("ini user otp %d", GetOtp.UsersID)
+	GetUser, err := s.repository.FindUserById(GetOtp.UsersID)
+
+	if err != nil {
+		return GetOtp, err
+
+	}
+
+	GetUser.IsVerif = true
+
+	_, err = s.repository.UpdateUser(GetUser)
+
+	if err != nil {
+		return GetOtp, errors.New("failed update user")
+	}
+	return GetOtp, nil
+
+}

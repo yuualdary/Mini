@@ -5,7 +5,7 @@ import (
 )
 
 type UserFormatter struct {
-	ID           int    `json:"id"`
+	ID           string `json:"id"`
 	Name         string `json:"name"`
 	Initial      string `json:"initial"`
 	Email        string `json:"email"`
@@ -15,7 +15,7 @@ type UserFormatter struct {
 
 func FormatUser(user models.Users, token string) UserFormatter {
 	formatter := UserFormatter{
-		ID:           int(user.ID),
+		ID:           user.ID,
 		Name:         user.Name,
 		Initial:      user.Initial,
 		Email:        user.Email,
@@ -26,7 +26,7 @@ func FormatUser(user models.Users, token string) UserFormatter {
 }
 
 type DetailUserFormatter struct {
-	ID           int    `json:"id"`
+	ID           string `json:"id"`
 	Name         string `json:"name"`
 	Initial      string `json:"initial"`
 	Email        string `json:"email"`
@@ -37,7 +37,7 @@ type DetailUserFormatter struct {
 func DetailUserFunc(user models.Users) DetailUserFormatter {
 
 	DetailUserFormatter := DetailUserFormatter{}
-	DetailUserFormatter.ID = int(user.ID)
+	DetailUserFormatter.ID = user.ID
 	DetailUserFormatter.Name = user.Name
 	DetailUserFormatter.Initial = user.Initial
 	DetailUserFormatter.Email = user.Email

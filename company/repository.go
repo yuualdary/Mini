@@ -9,9 +9,10 @@ import (
 type Repository interface {
 	CreateCompany(company models.Company) (models.Company, error)
 	UpdateCompany(company models.Company) (models.Company, error)
-	FindCompanyID(CompanyID int) (models.Company, error)
+	FindCompanyID(CompanyID string) (models.Company, error)
 	ListCompany() ([]models.Company, error)
-	DeleteCompany(company models.Company) error
+	FindCompanyOwner(UserID string) (models.Company, error)
+	//	DeleteCompany(company models.Company) error
 }
 
 type repository struct {
@@ -60,7 +61,7 @@ func (r *repository) ListCompany() ([]models.Company, error) {
 
 }
 
-func (r *repository) FindCompanyID(CompanyID int) (models.Company, error) {
+func (r *repository) FindCompanyID(CompanyID string) (models.Company, error) {
 
 	var company models.Company
 
@@ -71,4 +72,18 @@ func (r *repository) FindCompanyID(CompanyID int) (models.Company, error) {
 	}
 
 	return company, nil
+}
+
+func (r *repository) FindCompanyOwner(UserID string) (models.Company, error) {
+
+	var company models.Company
+
+	err := r.db.Where("Users = ?", company).Find(&company).Error
+
+	if err != nil {
+		return company, err
+	}
+
+	return company, nil
+
 }

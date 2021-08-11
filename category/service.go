@@ -2,6 +2,7 @@ package category
 
 import (
 	"pasarwarga/article"
+	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 
 	"github.com/gosimple/slug"
@@ -26,6 +27,7 @@ func NewService(repository Repository, ArticleRepository article.Repository) *se
 func (s *service) CreateCategory(input CategoryInput) (models.Category, error) {
 
 	GetCategory := models.Category{}
+	GetCategory.ID = generatornumber.NewUUID()
 	GetCategory.CategoryName = input.CategoryName
 	GetCategory.CategoryPrefix = input.CategoryPrefix
 	GetCategory.CategorySlug = slug.Make(input.CategoryName)
@@ -92,13 +94,13 @@ func (s *service) DeleteCategory(input CategoryIDInput) error {
 		return err
 	}
 
-	DeleteArticleErr := s.ArticleRepository.DeleteArticleByCategoryID(int(GetCurrentID.ID))
+	DeleteArticleErr := s.ArticleRepository.DeleteArticleByCategoryID(GetCurrentID.ID)
 
 	if DeleteArticleErr != nil {
 		return DeleteArticleErr
 	}
 
-	DeleteCategoryErr := s.repository.DeleteCategory(int(GetCurrentID.ID))
+	DeleteCategoryErr := s.repository.DeleteCategory(GetCurrentID.ID)
 
 	if DeleteCategoryErr != nil {
 		return DeleteCategoryErr

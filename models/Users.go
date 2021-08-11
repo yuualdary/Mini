@@ -2,12 +2,10 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Users struct {
-	gorm.Model
+	ID           string `gorm:"primary_key"`
 	Name         string
 	Email        string
 	Bod          time.Time
@@ -17,6 +15,4 @@ type Users struct {
 	ProfilePhoto string
 	Role         string
 	Token        string
-	CompanyID    int
-	Companies    Company `gorm:"foreignKey:CompanyID"`
 }

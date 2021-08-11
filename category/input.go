@@ -6,5 +6,5 @@ type CategoryInput struct {
 }
 
 type CategoryIDInput struct {
-	ID int `uri:"id" binding:"required"`
+	ID string `uri:"id" binding:"required"`
 }
