@@ -2,6 +2,7 @@ package company
 
 import (
 	"errors"
+	"pasarwarga/Users"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 )
@@ -14,11 +15,12 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository     Repository
+	UserRepository Users.Repository
 }
 
-func NewService(repository Repository) *service {
-	return &service{repository}
+func NewService(repository Repository, UserRepository Users.Repository) *service {
+	return &service{repository, UserRepository}
 }
 
 func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error) {
@@ -29,15 +31,22 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 		return IsUserGetCompany, err
 	}
 
-	if IsUserGetCompany.Users.ID != "" {
+	if IsUserGetCompany.UserID != "" {
 		return IsUserGetCompany, errors.New("You already have a company")
+	}
+
+	IsUserExist, err := s.UserRepository.FindUserById(input.User.ID)
+
+	if IsUserExist.ID != input.User.ID {
+
+		return models.Company{}, errors.New("User Not Registered")
 	}
 
 	CreateCompany := models.Company{}
 	CreateCompany.ID = generatornumber.NewUUID()
 	CreateCompany.CompanyName = input.CompanyName
 	CreateCompany.CompanyDescription = input.CompanyDescription
-	CreateCompany.UserID = IsUserGetCompany.UserID
+	CreateCompany.UserID = IsUserExist.ID
 
 	Save, err := s.repository.CreateCompany(CreateCompany)
 

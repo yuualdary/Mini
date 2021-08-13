@@ -28,7 +28,7 @@ func main() {
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
 	UsersService := Users.NewService(UserRepository)
-	CompanyService := company.NewService(CompanyRepository)
+	CompanyService := company.NewService(CompanyRepository, UserRepository)
 	AuthService := auth.NewService()
 
 	CategoryHandler := handler.NewCategoryHandler(CategoryService)
@@ -58,6 +58,8 @@ func main() {
 		v1.POST("/company", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.CreateCompany)
 		v1.POST("/company/:id", CompanyHandler.DetailCompany)
 		v1.PUT("/company/:id", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.UpdateCompany)
+		v1.GET("/company/:id", CompanyHandler.DetailCompany)
+		v1.GET("/company", CompanyHandler.ListCompany)
 
 	}
 

@@ -31,7 +31,7 @@ func AuthMiddleware(AuthService auth.Service, UserService Users.Service) gin.Han
 
 		if len(ArrayToken) == 2 {
 			TokenString = ArrayToken[1]
-
+			//ambil array token
 		}
 		//check apakah token valid
 		Token, err := auth.NewService().ValidateToken(TokenString)

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"pasarwarga/company"
 	"pasarwarga/helper"
+	"pasarwarga/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +33,8 @@ func (h *CompanyHandler) CreateCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
+	currentUser := c.MustGet("CurrentUser").(models.Users)
+	input.User = currentUser
 	NewCategory, err := h.CompanyService.CreateCompany(input)
 
 	if err != nil {
@@ -73,7 +75,8 @@ func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
+	currentUser := c.MustGet("CurrentUser").(models.Users)
+	input.User = currentUser
 	NewCategory, err := h.CompanyService.UpdateCompany(input, inputid)
 
 	if err != nil {

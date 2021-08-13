@@ -38,7 +38,7 @@ func (r *repository) CreateCompany(company models.Company) (models.Company, erro
 
 func (r *repository) UpdateCompany(company models.Company) (models.Company, error) {
 
-	err := r.db.Create(&company).Error
+	err := r.db.Save(&company).Error
 
 	if err != nil {
 		return company, err
@@ -51,7 +51,7 @@ func (r *repository) UpdateCompany(company models.Company) (models.Company, erro
 func (r *repository) ListCompany() ([]models.Company, error) {
 
 	var company []models.Company
-	err := r.db.Create(&company).Error
+	err := r.db.Find(&company).Error
 
 	if err != nil {
 		return company, err
@@ -78,7 +78,7 @@ func (r *repository) FindCompanyOwner(UserID string) (models.Company, error) {
 
 	var company models.Company
 
-	err := r.db.Where("Users = ?", company).Find(&company).Error
+	err := r.db.Where("user_id = ?", UserID).Find(&company).Error
 
 	if err != nil {
 		return company, err

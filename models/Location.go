@@ -2,9 +2,9 @@ package models
 
 type Locations struct {
 	ID           string `gorm:"primary_key"`
-	LocationID   int
+	LocationID   string `gorm:"type:varchar(191)"`
 	LocationCity string
-	CompanyID    int
+	CompanyID    string   `gorm:"type:varchar(191)"`
 	Companies    Company  `gorm:"foreignKey:CompanyID"`
 	Categories   Category `gorm:"foreignKey:LocationID"`
 
