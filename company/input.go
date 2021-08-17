@@ -13,3 +13,7 @@ type CreateCompanyInput struct {
 type CompanyFindIDInput struct {
 	ID string `uri:"id" binding:"required"`
 }
+
+type SearchCompany struct {
+	Value string `uri:"companyname"`
+}

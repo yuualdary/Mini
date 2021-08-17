@@ -1,9 +1,6 @@
 package Users
 
-import (
-	"pasarwarga/models"
-	"time"
-)
+import "time"
 
 type RegisterInput struct {
 	Name     string    `json:"name" binding:"required"`
@@ -17,7 +14,7 @@ type LoginInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type OtpInput struct {
-	Otp  int `json:"otp" binding:"required"`
-	User models.Users
-}
+// type OtpInput struct {
+// 	Otp  int `json:"otp" binding:"required"`
+// 	User models.Users
+// }

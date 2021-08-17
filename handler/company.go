@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"pasarwarga/company"
 	"pasarwarga/helper"
@@ -120,7 +121,10 @@ func (h *CompanyHandler) DetailCompany(c *gin.Context) {
 }
 func (h *CompanyHandler) ListCompany(c *gin.Context) {
 
-	ListAllCompany, err := h.CompanyService.ListCompany()
+	input := c.Query("companyname")
+	// input := err
+	fmt.Println(input)
+	ListAllCompany, err := h.CompanyService.ListCompany(input)
 
 	if err != nil {
 
@@ -131,7 +135,7 @@ func (h *CompanyHandler) ListCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("List Company", http.StatusOK, "success", ListAllCompany)
+	response := helper.APIResponse("List Company", http.StatusOK, "success", company.FormatListCompany(ListAllCompany))
 	c.JSON(http.StatusOK, response)
 
 }

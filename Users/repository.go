@@ -1,7 +1,6 @@
 package Users
 
 import (
-	"fmt"
 	"pasarwarga/models"
 
 	"gorm.io/gorm"
@@ -11,10 +10,8 @@ type Repository interface {
 	SaveUser(user models.Users) (models.Users, error)
 	FindUserEmail(email string) (models.Users, error)
 	FindUserById(ID string) (models.Users, error)
-	SaveOTP(otp models.Otps) (models.Otps, error)
-	GetUserOtp(UserID string) (models.Otps, error)
 	UpdateUser(users models.Users) (models.Users, error)
-	UpdateOTP(otp models.Otps) (models.Otps, error)
+	SaveOTP(otp models.Otps) (models.Otps, error)
 }
 
 type repository struct {
@@ -72,29 +69,6 @@ func (r *repository) FindUserById(ID string) (models.Users, error) {
 // 	err := r.db.Preload("company_id = ?",GetUser.ID )
 // }
 
-func (r *repository) SaveOTP(otp models.Otps) (models.Otps, error) {
-
-	err := r.db.Create(&otp).Error
-
-	if err != nil {
-
-		return otp, err
-	}
-
-	return otp, nil
-}
-func (r *repository) UpdateOTP(otp models.Otps) (models.Otps, error) {
-
-	err := r.db.Save(&otp).Error
-
-	if err != nil {
-
-		return otp, err
-	}
-
-	return otp, nil
-}
-
 func (r *repository) UpdateUser(users models.Users) (models.Users, error) {
 
 	err := r.db.Save(&users).Error
@@ -106,15 +80,14 @@ func (r *repository) UpdateUser(users models.Users) (models.Users, error) {
 
 	return users, nil
 }
+func (r *repository) SaveOTP(otp models.Otps) (models.Otps, error) {
 
-func (r *repository) GetUserOtp(UserID string) (models.Otps, error) {
+	err := r.db.Create(&otp).Error
 
-	var Otp models.Otps
-	err := r.db.Where("users_id = ?", UserID).Find(&Otp).Error
-	fmt.Println(err)
 	if err != nil {
-		return Otp, err
+
+		return otp, err
 	}
 
-	return Otp, err
+	return otp, nil
 }

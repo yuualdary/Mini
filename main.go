@@ -1,6 +1,7 @@
 package main
 
 import (
+	"pasarwarga/Otp"
 	"pasarwarga/Users"
 	"pasarwarga/article"
 	"pasarwarga/auth"
@@ -24,10 +25,12 @@ func main() {
 	ArticleRepository := article.NewRepository(config.DB)
 	UserRepository := Users.NewRepository(config.DB)
 	CompanyRepository := company.NewRepository(config.DB)
+	OtpRepository := Otp.NewRepository(config.DB)
 
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
 	UsersService := Users.NewService(UserRepository)
+	OtpService := Otp.NewService(OtpRepository, UserRepository)
 	CompanyService := company.NewService(CompanyRepository, UserRepository)
 	AuthService := auth.NewService()
 
@@ -35,6 +38,7 @@ func main() {
 	ArticleHandler := handler.NewArticleHandler(ArticleService)
 	UsersHandler := handler.NewUserHandler(UsersService, AuthService)
 	CompanyHandler := handler.NewCompanyHandler(CompanyService)
+	OtpHandler := handler.NewOtpHandler(OtpService)
 
 	router.Static("/images", "./images")
 
@@ -53,8 +57,8 @@ func main() {
 		v1.POST("/users/register", UsersHandler.RegisterUser)
 		v1.POST("/users/login", UsersHandler.LoginUser)
 		v1.POST("/users/uploadavatar", middleware.AuthMiddleware(AuthService, UsersService), UsersHandler.SaveAvatar)
-		v1.POST("/users/otpcheck", middleware.AuthMiddleware(AuthService, UsersService), UsersHandler.CheckOtp)
-		v1.POST("/users/resendotp", middleware.AuthMiddleware(AuthService, UsersService), UsersHandler.ResendOTP)
+		v1.POST("/otp/otpcheck", middleware.AuthMiddleware(AuthService, UsersService), OtpHandler.CheckOtp)
+		v1.POST("/otp/resendotp", middleware.AuthMiddleware(AuthService, UsersService), OtpHandler.ResendOTP)
 		v1.POST("/company", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.CreateCompany)
 		v1.POST("/company/:id", CompanyHandler.DetailCompany)
 		v1.PUT("/company/:id", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.UpdateCompany)

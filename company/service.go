@@ -10,7 +10,7 @@ import (
 type Service interface {
 	CreateCompany(input CreateCompanyInput) (models.Company, error)
 	UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error)
-	ListCompany() ([]models.Company, error)
+	ListCompany(value string) ([]models.Company, error)
 	DetailCompany(input CompanyFindIDInput) (models.Company, error)
 }
 
@@ -99,9 +99,9 @@ func (s *service) DetailCompany(inputid CompanyFindIDInput) (models.Company, err
 	return FindID, nil
 
 }
-func (s *service) ListCompany() ([]models.Company, error) {
+func (s *service) ListCompany(value string) ([]models.Company, error) {
 
-	ListCompany, err := s.repository.ListCompany()
+	ListCompany, err := s.repository.ListCompany(value)
 
 	if err != nil {
 		return ListCompany, err

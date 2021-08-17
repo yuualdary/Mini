@@ -1,6 +1,7 @@
 package company
 
 import (
+	"fmt"
 	"pasarwarga/models"
 
 	"gorm.io/gorm"
@@ -10,7 +11,7 @@ type Repository interface {
 	CreateCompany(company models.Company) (models.Company, error)
 	UpdateCompany(company models.Company) (models.Company, error)
 	FindCompanyID(CompanyID string) (models.Company, error)
-	ListCompany() ([]models.Company, error)
+	ListCompany(value string) ([]models.Company, error)
 	FindCompanyOwner(UserID string) (models.Company, error)
 	//	DeleteCompany(company models.Company) error
 }
@@ -48,10 +49,13 @@ func (r *repository) UpdateCompany(company models.Company) (models.Company, erro
 
 }
 
-func (r *repository) ListCompany() ([]models.Company, error) {
+func (r *repository) ListCompany(value string) ([]models.Company, error) {
 
 	var company []models.Company
-	err := r.db.Find(&company).Error
+	fmt.Println(value + "%")
+	// err := r.db.Preload("Users").Where("company_name LIKE ?", "%"+value+"%").Find(&company).Error
+
+	err := r.db.Where("company_name LIKE ?", "%"+value+"%").Find(&company).Error
 
 	if err != nil {
 		return company, err
