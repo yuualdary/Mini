@@ -9,6 +9,7 @@ import (
 	"pasarwarga/company"
 	"pasarwarga/config"
 	"pasarwarga/handler"
+	"pasarwarga/location"
 	"pasarwarga/middleware"
 
 	"github.com/gin-contrib/cors"
@@ -26,12 +27,14 @@ func main() {
 	UserRepository := Users.NewRepository(config.DB)
 	CompanyRepository := company.NewRepository(config.DB)
 	OtpRepository := Otp.NewRepository(config.DB)
+	LocationRepository := location.NewRepository(config.DB)
 
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
 	UsersService := Users.NewService(UserRepository)
 	OtpService := Otp.NewService(OtpRepository, UserRepository)
 	CompanyService := company.NewService(CompanyRepository, UserRepository)
+	LocationService := location.NewService(LocationRepository)
 	AuthService := auth.NewService()
 
 	CategoryHandler := handler.NewCategoryHandler(CategoryService)
@@ -39,6 +42,7 @@ func main() {
 	UsersHandler := handler.NewUserHandler(UsersService, AuthService)
 	CompanyHandler := handler.NewCompanyHandler(CompanyService)
 	OtpHandler := handler.NewOtpHandler(OtpService)
+	LocationHandler := handler.NewLocationHandler(LocationService)
 
 	router.Static("/images", "./images")
 
@@ -64,6 +68,8 @@ func main() {
 		v1.PUT("/company/:id", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.UpdateCompany)
 		v1.GET("/company/:id", CompanyHandler.DetailCompany)
 		v1.GET("/company", CompanyHandler.ListCompany)
+		v1.POST("/location", LocationHandler.CreateLocation)
+		v1.GET("/location", LocationHandler.ListLocation)
 
 	}
 

@@ -50,3 +50,13 @@ func (s *service) UpdateLocation(input DetailLocationInput, inputdata CreateLoca
 	return UpdateLocation, nil
 
 }
+func (s *service) LocationList() ([]models.Locations, error) {
+
+	List, err := s.repository.ListLocation()
+	if err != nil {
+		return List, err
+	}
+
+	return List, nil
+
+}
