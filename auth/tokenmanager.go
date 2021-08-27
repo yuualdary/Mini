@@ -19,50 +19,72 @@ func NewTokenService() *TokenManager {
 }
 
 type TokenInterface interface {
-	CreateToken(userId, userName string) (*TokenDetails, error)
+	GenerateToken(userID string) (*TokenDetails, error)
+	ValidateToken(EncodeToken string) (*jwt.Token, error)
 	ExtractTokenMetadata(*http.Request) (*AccessDetails, error)
 }
 
 //Token implements the TokenInterface
 var _ TokenInterface = &TokenManager{}
 
-func (t *TokenManager) CreateToken(userId, userName string) (*TokenDetails, error) {
+func (s *TokenManager) GenerateToken(userID string) (*TokenDetails, error) {
+	//masukkin ke token detail
 	td := &TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 30).Unix() //expires after 30 min
 	td.TokenUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUuid = td.TokenUuid + "++" + userId
-
+	td.RefreshUuid = td.TokenUuid + "++" + userID
 	var err error
-	//Creating Access Token
-	atClaims := jwt.MapClaims{}
-	atClaims["access_uuid"] = td.TokenUuid
-	atClaims["user_id"] = userId
-	atClaims["user_name"] = userName
-	atClaims["exp"] = td.AtExpires
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+
+	claim := jwt.MapClaims{}
+	claim["access_uuid"] = td.AccessToken
+	claim["user_id"] = userID //value dari user
+	claim["exp"] = td.AtExpires
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	//token valid jika, dibuat dengan secret key
+	td.AccessToken, err = token.SignedString(SECRET_KEY)
+
 	if err != nil {
 		return nil, err
 	}
-
 	//Creating Refresh Token
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUuid = td.TokenUuid + "++" + userId
+	td.RefreshUuid = td.TokenUuid + "++" + userID
 
 	rtClaims := jwt.MapClaims{}
 	rtClaims["refresh_uuid"] = td.RefreshUuid
-	rtClaims["user_id"] = userId
-	rtClaims["user_name"] = userName
+	rtClaims["user_id"] = userID
 	rtClaims["exp"] = td.RtExpires
-	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
-
-	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
+	rtoken := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	td.RefreshToken, err = rtoken.SignedString(SECRET_KEY)
 	if err != nil {
 		return nil, err
 	}
 	return td, nil
+
+	//	return SignedToken, nil
+}
+
+func (s *TokenManager) ValidateToken(EncodeToken string) (*jwt.Token, error) {
+
+	token, err := jwt.Parse(EncodeToken, func(token *jwt.Token) (interface{}, error) { //func ny bawaan
+		//jadi fungsi func mengecek apakah token yang dibuat sesuai dengan secret_key yand kita buat
+		_, ok := token.Method.(*jwt.SigningMethodHMAC) //tipenya HMAC karena diatas pake HS256
+
+		if !ok {
+
+			return nil, errors.New("invalid token")
+		}
+		return []byte(SECRET_KEY), nil
+	})
+
+	if err != nil {
+		return token, err
+	}
+
+	return token, nil
+
 }
 
 func (t *TokenManager) ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {

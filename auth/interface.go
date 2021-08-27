@@ -45,7 +45,10 @@ func (tk *RedisAuthService) CreateAuth(userId string, td *TokenDetails) error {
 	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
+	fmt.Println(userId)
 
+	//atCreated, err := tk.client.Set(td.TokenUuid, userId, at.Sub(now)).Result()
+	//tokennya sus
 	atCreated, err := tk.client.Set(td.TokenUuid, userId, at.Sub(now)).Result()
 	if err != nil {
 		return err

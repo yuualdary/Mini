@@ -62,13 +62,6 @@ func (r *repository) FindUserById(ID string) (models.Users, error) {
 
 }
 
-// func (r *repository)FindUserWithCompany(ID int) (models.Users,error){
-
-// 	var company models.Users
-
-// 	err := r.db.Preload("company_id = ?",GetUser.ID )
-// }
-
 func (r *repository) UpdateUser(users models.Users) (models.Users, error) {
 
 	err := r.db.Save(&users).Error

@@ -14,6 +14,7 @@ type Repository interface {
 	ListCompany(value string) ([]models.Company, error)
 	FindCompanyOwner(UserID string) (models.Company, error)
 	//	DeleteCompany(company models.Company) error
+	//FindUserWithCompany(ID string) (models.Company, error)
 }
 
 type repository struct {

@@ -56,7 +56,7 @@ func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 	err := c.ShouldBindUri(&inputid)
 
 	if err != nil {
-		response := helper.APIResponse("Fail Get Bind Data", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Fail Get Bind Data", http.StatusBadRequest, "error", err)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}

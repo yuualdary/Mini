@@ -11,6 +11,7 @@ import (
 	"pasarwarga/handler"
 	"pasarwarga/location"
 	"pasarwarga/middleware"
+	Position "pasarwarga/position"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,13 +22,14 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	config.ConnectDatabase()
-
+	//	var redis *redis.Client
 	CategoryRepository := category.NewRepository(config.DB)
 	ArticleRepository := article.NewRepository(config.DB)
 	UserRepository := Users.NewRepository(config.DB)
 	CompanyRepository := company.NewRepository(config.DB)
 	OtpRepository := Otp.NewRepository(config.DB)
 	LocationRepository := location.NewRepository(config.DB)
+	PositionRepository := Position.NewRepository(config.DB)
 
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
@@ -35,7 +37,10 @@ func main() {
 	OtpService := Otp.NewService(OtpRepository, UserRepository)
 	CompanyService := company.NewService(CompanyRepository, UserRepository)
 	LocationService := location.NewService(LocationRepository)
+	PositionService := Position.NewService(PositionRepository, CompanyRepository)
 	AuthService := auth.NewService()
+	//AuthToken := auth.NewTokenService()
+	//Servers := auth.NewAuthService(redis)
 
 	CategoryHandler := handler.NewCategoryHandler(CategoryService)
 	ArticleHandler := handler.NewArticleHandler(ArticleService)
@@ -43,6 +48,7 @@ func main() {
 	CompanyHandler := handler.NewCompanyHandler(CompanyService)
 	OtpHandler := handler.NewOtpHandler(OtpService)
 	LocationHandler := handler.NewLocationHandler(LocationService)
+	PositionHandler := handler.NewPositionHandler(PositionService)
 
 	router.Static("/images", "./images")
 
@@ -70,6 +76,9 @@ func main() {
 		v1.GET("/company", CompanyHandler.ListCompany)
 		v1.POST("/location", LocationHandler.CreateLocation)
 		v1.GET("/location", LocationHandler.ListLocation)
+		v1.GET("/position", PositionHandler.ListPosition)
+		v1.POST("/position/:id", PositionHandler.DetailPosition)
+		v1.POST("/position", middleware.AuthMiddleware(AuthService, UsersService), PositionHandler.CreatePosition)
 
 	}
 

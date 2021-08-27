@@ -8,11 +8,15 @@ import (
 	"pasarwarga/helper"
 	"pasarwarga/models"
 
+	//"github.com/go-redis/redis/v7"
+
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
 	UserService Users.Service
+	// AuthService auth.TokenInterface
+	// Servers     auth.AuthInterface
 	AuthService auth.Service
 }
 
@@ -163,5 +167,61 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 
 }
 
+// func (h *UserHandler) LoginUser(c *gin.Context) {
+// 	var input Users.LoginInput
 
+// 	err := c.ShouldBindJSON(&input)
 
+// 	if err != nil {
+// 		errors := helper.FormatValidationError(err)
+
+// 		ErrorMessage := gin.H{
+// 			"error": errors,
+// 		}
+// 		response := helper.APIResponse("Login Failed", http.StatusBadRequest, "error", ErrorMessage)
+// 		c.JSON(http.StatusUnprocessableEntity, response)
+// 		return
+
+// 	}
+
+// 	NewLogin, err := h.UserService.LoginUser(input)
+
+// 	if err != nil {
+// 		ErrorMessage := gin.H{
+// 			"error": err.Error(),
+// 		}
+// 		response := helper.APIResponse("Login Failed", http.StatusBadRequest, "error", ErrorMessage)
+// 		c.JSON(http.StatusUnprocessableEntity, response)
+// 		return
+// 	}
+
+// 	ts, err := h.AuthService.GenerateToken(NewLogin.ID)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnprocessableEntity, err.Error())
+// 		return
+// 	}
+// 	fmt.Println(NewLogin)
+// 	//save token to redis
+// 	saveErr := h.Servers.CreateAuth(NewLogin.ID, ts)
+// 	if saveErr != nil {
+// 		c.JSON(http.StatusUnprocessableEntity, saveErr.Error())
+// 	}
+// 	tokens := map[string]string{
+// 		"access_token":  ts.AccessToken,
+// 		"refresh_token": ts.RefreshToken,
+// 	}
+// 	c.JSON(http.StatusOK, tokens)
+// }
+
+// func (h *UserHandler) Logout(c *gin.Context) {
+// 	//If metadata is passed and the tokens valid, delete them from the redis store
+// 	metadata, _ := h.AuthService.ExtractTokenMetadata(c.Request)
+// 	if metadata != nil {
+// 		deleteErr := h.Servers.DeleteTokens(metadata)
+// 		if deleteErr != nil {
+// 			c.JSON(http.StatusBadRequest, deleteErr.Error())
+// 			return
+// 		}
+// 	}
+// 	c.JSON(http.StatusOK, "Successfully logged out")
+// }

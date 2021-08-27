@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"pasarwarga/Users"
 	"pasarwarga/auth"
+	"pasarwarga/company"
 	"pasarwarga/helper"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +36,7 @@ func AuthMiddleware(AuthService auth.Service, UserService Users.Service) gin.Han
 			//ambil array token
 		}
 		//check apakah token valid
-		Token, err := auth.NewService().ValidateToken(TokenString)
+		Token, err := auth.NewTokenService().ValidateToken(TokenString)
 
 		if err != nil {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
@@ -66,4 +68,18 @@ func AuthMiddleware(AuthService auth.Service, UserService Users.Service) gin.Han
 
 	}
 
+}
+
+func AuthCompanyMiddleware(CompanyService company.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		session := sessions.Default(c)
+
+		UserIDSession := session.Get("UserID")
+
+		if UserIDSession == nil {
+			c.Redirect(http.StatusNotFound, "/login")
+			return
+		}
+	}
 }
