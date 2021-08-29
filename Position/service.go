@@ -1,7 +1,7 @@
 package Position
 
 import (
-	"pasarwarga/company"
+	"pasarwarga/Company"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 )
@@ -11,14 +11,15 @@ type Service interface {
 	UpdatePosition(inputid DetailPositionInput, inputdata CreatePositionInput) (models.Position, error)
 	ListPosition() ([]models.Position, error)
 	DetailPosition(inputid DetailPositionInput) (models.Position, error)
+//	DeletePosition(input DetailPositionInput) error
 }
 
 type service struct {
 	repository        Repository
-	CompanyRepository company.Repository
+	CompanyRepository Company.Repository
 }
 
-func NewService(repository Repository, CompanyRepository company.Repository) *service {
+func NewService(repository Repository, CompanyRepository Company.Repository) *service {
 	return &service{repository, CompanyRepository}
 }
 
@@ -72,8 +73,8 @@ func (s *service) ListPosition() ([]models.Position, error) {
 	}
 
 	return GetList, nil
-}
 
+}
 func (s *service) DetailPosition(inputid DetailPositionInput) (models.Position, error) {
 
 	FindPosition, err := s.repository.DetailPosition(inputid.ID)
@@ -84,3 +85,9 @@ func (s *service) DetailPosition(inputid DetailPositionInput) (models.Position, 
 
 	return FindPosition, nil
 }
+
+
+
+
+
+

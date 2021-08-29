@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"pasarwarga/company"
+	"pasarwarga/Company"
 	"pasarwarga/helper"
 	"pasarwarga/models"
 
@@ -11,15 +11,15 @@ import (
 )
 
 type CompanyHandler struct {
-	CompanyService company.Service
+	CompanyService Company.Service
 }
 
-func NewCompanyHandler(CompanyService company.Service) *CompanyHandler {
+func NewCompanyHandler(CompanyService Company.Service) *CompanyHandler {
 	return &CompanyHandler{CompanyService}
 }
 
 func (h *CompanyHandler) CreateCompany(c *gin.Context) {
-	var input company.CreateCompanyInput
+	var input Company.CreateCompanyInput
 
 	err := c.ShouldBindJSON(&input)
 
@@ -52,7 +52,7 @@ func (h *CompanyHandler) CreateCompany(c *gin.Context) {
 }
 func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 
-	var inputid company.CompanyFindIDInput
+	var inputid Company.CompanyFindIDInput
 	err := c.ShouldBindUri(&inputid)
 
 	if err != nil {
@@ -61,7 +61,7 @@ func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 		return
 	}
 
-	var input company.CreateCompanyInput
+	var input Company.CreateCompanyInput
 
 	err = c.ShouldBindJSON(&input)
 
@@ -96,7 +96,7 @@ func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 
 func (h *CompanyHandler) DetailCompany(c *gin.Context) {
 
-	var input company.CompanyFindIDInput
+	var input Company.CompanyFindIDInput
 	err := c.ShouldBindUri(&input)
 
 	if err != nil {
@@ -135,7 +135,7 @@ func (h *CompanyHandler) ListCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("List Company", http.StatusOK, "success", company.FormatListCompany(ListAllCompany))
+	response := helper.APIResponse("List Company", http.StatusOK, "success", Company.FormatListCompany(ListAllCompany))
 	c.JSON(http.StatusOK, response)
 
 }

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"pasarwarga/Company"
 	"pasarwarga/Otp"
 	"pasarwarga/Users"
 	"pasarwarga/article"
 	"pasarwarga/auth"
 	"pasarwarga/category"
-	"pasarwarga/company"
 	"pasarwarga/config"
 	"pasarwarga/handler"
 	"pasarwarga/location"
@@ -26,7 +26,7 @@ func main() {
 	CategoryRepository := category.NewRepository(config.DB)
 	ArticleRepository := article.NewRepository(config.DB)
 	UserRepository := Users.NewRepository(config.DB)
-	CompanyRepository := company.NewRepository(config.DB)
+	CompanyRepository := Company.NewRepository(config.DB)
 	OtpRepository := Otp.NewRepository(config.DB)
 	LocationRepository := location.NewRepository(config.DB)
 	PositionRepository := Position.NewRepository(config.DB)
@@ -35,7 +35,7 @@ func main() {
 	ArticleService := article.NewService(ArticleRepository)
 	UsersService := Users.NewService(UserRepository)
 	OtpService := Otp.NewService(OtpRepository, UserRepository)
-	CompanyService := company.NewService(CompanyRepository, UserRepository)
+	CompanyService := Company.NewService(CompanyRepository, UserRepository)
 	LocationService := location.NewService(LocationRepository)
 	PositionService := Position.NewService(PositionRepository, CompanyRepository)
 	AuthService := auth.NewService()

@@ -9,5 +9,6 @@ type CreatePositionInput struct {
 }
 
 type DetailPositionInput struct {
-	ID string `uri:"id" binding:"required"`
+	ID   string `uri:"id" binding:"required"`
+	Users models.Users
 }
