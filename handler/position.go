@@ -2,9 +2,9 @@ package handler
 
 import (
 	"net/http"
+	"pasarwarga/Position"
 	"pasarwarga/helper"
 	"pasarwarga/models"
-	Position "pasarwarga/position"
 
 	"github.com/gin-gonic/gin"
 )
@@ -156,6 +156,43 @@ func (h *PositionHandler) DetailPosition(c *gin.Context) {
 		return
 	}
 	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatDetailPosition(FindPosition))
+	c.JSON(http.StatusOK, response)
+
+}
+
+func (h *PositionHandler) DeletePosition(c *gin.Context) {
+
+	var input Position.DetailPositionInput
+
+	err := c.ShouldBindUri(&input)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	currentUser := c.MustGet("CurrentUser").(models.Users)
+	input.Users = currentUser
+	err = h.PositionService.DeletePosition(input)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", "Delete Data")
 	c.JSON(http.StatusOK, response)
 
 }

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -23,9 +24,12 @@ func NewService() *jwtService {
 
 func (s *jwtService) GenerateToken(userID string) (string, error) {
 
-	claim := jwt.MapClaims{}
-	claim["user_id"] = userID //value dari user
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	atClaims := jwt.MapClaims{}
+	//claim["user_id"] = userID //value dari user
+	atClaims["authorized"] = true
+	atClaims["user_id"] = userID
+	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	//token valid jika, dibuat dengan secret key
 	SignedToken, err := token.SignedString(SECRET_KEY)
 

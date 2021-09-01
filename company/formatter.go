@@ -1,4 +1,4 @@
-package company
+package Company
 
 import "pasarwarga/models"
 

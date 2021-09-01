@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"net/http"
+	"pasarwarga/Company"
 	"pasarwarga/Users"
 	"pasarwarga/auth"
-	"pasarwarga/company"
 	"pasarwarga/helper"
 	"strings"
 
@@ -70,7 +70,7 @@ func AuthMiddleware(AuthService auth.Service, UserService Users.Service) gin.Han
 
 }
 
-func AuthCompanyMiddleware(CompanyService company.Service) gin.HandlerFunc {
+func AuthCompanyMiddleware(CompanyService Company.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		session := sessions.Default(c)

@@ -11,6 +11,7 @@ type Repository interface {
 	UpdatePosition(position models.Position) (models.Position, error)
 	ListPosition() ([]models.Position, error)
 	DetailPosition(ID string) (models.Position, error)
+	DeletePosition(ID string) error
 }
 
 type repository struct {
@@ -64,4 +65,16 @@ func (r *repository) DetailPosition(ID string) (models.Position, error) {
 	}
 
 	return position, nil
+}
+
+func (r *repository) DeletePosition(ID string) error {
+
+	var position models.Position
+
+	err := r.db.Where("id = ?", ID).Delete(&position).Error
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
