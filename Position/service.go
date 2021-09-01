@@ -1,6 +1,7 @@
 package Position
 
 import (
+	"errors"
 	"pasarwarga/Company"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
@@ -11,7 +12,7 @@ type Service interface {
 	UpdatePosition(inputid DetailPositionInput, inputdata CreatePositionInput) (models.Position, error)
 	ListPosition() ([]models.Position, error)
 	DetailPosition(inputid DetailPositionInput) (models.Position, error)
-//	DeletePosition(input DetailPositionInput) error
+	DeletePosition(input DetailPositionInput) error
 }
 
 type service struct {
@@ -86,8 +87,24 @@ func (s *service) DetailPosition(inputid DetailPositionInput) (models.Position, 
 	return FindPosition, nil
 }
 
+func (s *service) DeletePosition(input DetailPositionInput) error {
 
+	FindDetail, err := s.repository.DetailPosition(input.ID)
 
+	if err != nil {
+		return err
+	}
 
+	FindOwner, err := s.CompanyRepository.FindCompanyOwner(input.Users.ID)
 
+	if err != nil {
+		return err
+	}
 
+	if FindDetail.CompanyID != FindOwner.UserID {
+
+		return errors.New("Not an owner")
+	}
+	return nil
+
+}

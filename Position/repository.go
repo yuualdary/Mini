@@ -71,7 +71,7 @@ func (r *repository) DeletePosition(ID string) error {
 
 	var position models.Position
 
-	err := r.db.Where("id = ?", ID).Find(&position).Error
+	err := r.db.Where("id = ?", ID).Delete(&position).Error
 
 	if err != nil {
 		return err

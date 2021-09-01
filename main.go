@@ -3,6 +3,7 @@ package main
 import (
 	"pasarwarga/Company"
 	"pasarwarga/Otp"
+	"pasarwarga/Position"
 	"pasarwarga/Users"
 	"pasarwarga/article"
 	"pasarwarga/auth"
@@ -11,7 +12,6 @@ import (
 	"pasarwarga/handler"
 	"pasarwarga/location"
 	"pasarwarga/middleware"
-	Position "pasarwarga/position"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
