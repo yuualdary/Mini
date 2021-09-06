@@ -1,6 +1,7 @@
 package main
 
 import (
+	"pasarwarga/Candidate"
 	"pasarwarga/Company"
 	"pasarwarga/Otp"
 	"pasarwarga/Position"
@@ -30,6 +31,7 @@ func main() {
 	OtpRepository := Otp.NewRepository(config.DB)
 	LocationRepository := location.NewRepository(config.DB)
 	PositionRepository := Position.NewRepository(config.DB)
+	CandidateRepository := Candidate.NewRepository(config.DB)
 
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
@@ -38,6 +40,7 @@ func main() {
 	CompanyService := Company.NewService(CompanyRepository, UserRepository)
 	LocationService := location.NewService(LocationRepository)
 	PositionService := Position.NewService(PositionRepository, CompanyRepository)
+	CandidateService := Candidate.NewService(CandidateRepository, UserRepository, PositionRepository, CompanyRepository)
 	AuthService := auth.NewService()
 	//AuthToken := auth.NewTokenService()
 	//Servers := auth.NewAuthService(redis)
@@ -49,6 +52,7 @@ func main() {
 	OtpHandler := handler.NewOtpHandler(OtpService)
 	LocationHandler := handler.NewLocationHandler(LocationService)
 	PositionHandler := handler.NewPositionHandler(PositionService)
+	CandidateHandler := handler.NewCandidateHandler(CandidateService)
 
 	router.Static("/images", "./images")
 
@@ -79,6 +83,9 @@ func main() {
 		v1.GET("/position", PositionHandler.ListPosition)
 		v1.POST("/position/:id", PositionHandler.DetailPosition)
 		v1.POST("/position", middleware.AuthMiddleware(AuthService, UsersService), PositionHandler.CreatePosition)
+		v1.GET("/candidate/:id", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.ListCandidateToPosition)
+		v1.POST("/candidate/", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.CreateCandidate)
+		v1.PUT("/candidate/:id", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.UpdateCandidate)
 
 	}
 

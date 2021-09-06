@@ -90,7 +90,7 @@ func (h *UserHandler) SaveAvatar(c *gin.Context) {
 	CurrentUser := c.MustGet("CurrentUser").(models.Users)
 	UserID := CurrentUser.ID
 
-	path := fmt.Sprintf("images/%d-%s", UserID, file.Filename)
+	path := fmt.Sprintf("images/%s-%s", UserID, file.Filename)
 	err = c.SaveUploadedFile(file, path)
 
 	if err != nil {

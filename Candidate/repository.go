@@ -10,7 +10,7 @@ type Repository interface {
 	CreateCandidate(candidate models.Candidate) (models.Candidate, error)
 	UpdateCandidate(candidate models.Candidate) (models.Candidate, error)
 	DetailCandidate(ID string) (models.Candidate, error)
-	ListCandidate() ([]models.Candidate, error)
+	ListCandidate(positionid string) ([]models.Candidate, error)
 }
 
 type repository struct {
@@ -56,11 +56,11 @@ func (r *repository) DetailCandidate(ID string) (models.Candidate, error) {
 
 }
 
-func (r *repository) ListCandidate() ([]models.Candidate, error) {
+func (r *repository) ListCandidate(positioid string) ([]models.Candidate, error) {
 
 	var candidate []models.Candidate
 
-	err := r.db.Find(&candidate).Error
+	err := r.db.Preload("position").Where("position_id = ?", positioid).Find(&candidate).Error
 
 	if err != nil {
 		return []models.Candidate{}, err

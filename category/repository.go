@@ -11,6 +11,7 @@ type Repository interface {
 	FindCategoryID(CategoryID string) (models.Category, error)
 	UpdateCategory(category models.Category) (models.Category, error)
 	ListCategory() ([]models.Category, error)
+	ListStatus() ([]models.Category, error)
 	DeleteCategory(CategoryID string) error
 }
 
@@ -46,6 +47,19 @@ func (r *repository) FindCategoryID(CategoryID string) (models.Category, error) 
 		return category, err
 	}
 
+	return category, nil
+
+}
+
+func (r *repository) ListStatus() ([]models.Category, error) {
+
+	var category []models.Category
+
+	err := r.db.Where("categoryprefix = ?", "STATUS").Error
+
+	if err != nil {
+		return []models.Category{}, nil
+	}
 	return category, nil
 
 }

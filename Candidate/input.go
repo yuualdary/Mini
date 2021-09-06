@@ -1,11 +1,14 @@
 package Candidate
 
+import "pasarwarga/models"
+
 type CreateCandidateInput struct {
 	PositionID string `json:"positionid"  binding:"required"`
 	CategoryID string `json:"categoryid"  binding:"required"`
-	UserID     string `json:"userid"  binding:"required"`
+	User       models.Users
 }
 
 type DetailCandidateInput struct {
-	ID string `uri:"id"  binding:"required"`
+	ID   string `uri:"id"  binding:"required"`
+	User models.Users
 }

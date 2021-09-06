@@ -87,7 +87,7 @@ func (s *service) CheckOTP(input OtpInput) (models.Otps, error) {
 
 	}
 
-	fmt.Printf("ini user otp %d", GetOtp.UsersID)
+	fmt.Printf("ini user otp %s", GetOtp.UsersID)
 	GetUser, err := s.UserRepositroy.FindUserById(GetOtp.UsersID)
 
 	if err != nil {
