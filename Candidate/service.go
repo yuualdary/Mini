@@ -5,6 +5,7 @@ import (
 	"pasarwarga/Company"
 	"pasarwarga/Position"
 	"pasarwarga/Users"
+	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 )
 
@@ -12,6 +13,7 @@ type Service interface {
 	CreateCandidate(input CreateCandidateInput) (models.Candidate, error)
 	ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error)
 	UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error)
+	CheckOwnerValidation(input DetailCandidateInput) (bool, error)
 }
 
 type service struct {
@@ -34,9 +36,12 @@ func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate,
 	}
 
 	CreateCandidate := models.Candidate{}
+	CreateCandidate.ID = generatornumber.NewUUID()
 	CreateCandidate.CategoryID = input.CategoryID
 	CreateCandidate.PositionID = input.PositionID
 	CreateCandidate.UserID = FindUser.ID
+	CreateCandidate.UpdatedByID = FindUser.ID
+	//buat validasi gabisa apply 2x
 	//buat pdfnya
 	SaveCandidate, err := s.repository.CreateCandidate(CreateCandidate)
 
@@ -65,27 +70,40 @@ func (s *service) UpdateCandidateStatus(inputid DetailCandidateInput, input Crea
 func (s *service) ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error) {
 	//harusnya pakai middleware, buat misahin manya yg owner
 
-	CheckCompanyOwner, err := s.CompanyRepository.FindCompanyOwner(inputid.User.ID)
-	//userid 3 - companyid 2
-	if err != nil {
-		return []models.Candidate{}, err
-	}
-	CheckPosition, err := s.PositionRepository.DetailPosition(inputid.ID)
-	//pos 1 - company id 3
+	CheckOwner, err := s.CheckOwnerValidation(inputid)
+
 	if err != nil {
 		return []models.Candidate{}, err
 	}
 
-	if CheckCompanyOwner.ID != CheckPosition.Companies.ID {
-		return []models.Candidate{}, errors.New("Not Owner of This Position")
+	if CheckOwner != true {
+		return []models.Candidate{}, errors.New("Forbidden Access")
 	}
 
-	ListCandidateFromPosition, err := s.repository.ListCandidate(CheckPosition.ID)
+	ListCandidateFromPosition, err := s.repository.ListCandidate(inputid.ID)
 
 	if err != nil {
 		return ListCandidateFromPosition, err
+
 	}
 
 	return ListCandidateFromPosition, nil
+
+}
+
+func (s *service) CheckOwnerValidation(input DetailCandidateInput) (bool, error) {
+	//2 //3
+	CheckPosition, err := s.PositionRepository.DetailPosition(input.ID)
+	//get companyid positionid
+
+	if err != nil {
+		return false, err
+	}
+	//2 //4
+	if CheckPosition.CompanyID != input.Company.ID {
+		return false, err
+	}
+
+	return true, nil
 
 }

@@ -83,9 +83,9 @@ func main() {
 		v1.GET("/position", PositionHandler.ListPosition)
 		v1.POST("/position/:id", PositionHandler.DetailPosition)
 		v1.POST("/position", middleware.AuthMiddleware(AuthService, UsersService), PositionHandler.CreatePosition)
-		v1.GET("/candidate/:id", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.ListCandidateToPosition)
+		v1.GET("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.ListCandidateToPosition)
 		v1.POST("/candidate/", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.CreateCandidate)
-		v1.PUT("/candidate/:id", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.UpdateCandidate)
+		v1.PUT("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.UpdateCandidate)
 
 	}
 

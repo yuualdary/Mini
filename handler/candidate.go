@@ -19,7 +19,7 @@ func NewCandidateHandler(CandidateService Candidate.Service) *CandidateHandler {
 func (h *CandidateHandler) CreateCandidate(c *gin.Context) {
 	var input Candidate.CreateCandidateInput
 
-	err := c.ShouldBindJSON(input)
+	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -56,7 +56,7 @@ func (h *CandidateHandler) ListCandidateToPosition(c *gin.Context) {
 
 	var input Candidate.DetailCandidateInput
 
-	err := c.ShouldBindUri(input)
+	err := c.ShouldBindUri(&input)
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -70,8 +70,8 @@ func (h *CandidateHandler) ListCandidateToPosition(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("CurrentUser").(models.Users)
-	input.User = currentUser
+	currentUser := c.MustGet("CurrentOwner").(models.Company)
+	input.Company = currentUser
 
 	ListAllCandidate, err := h.CandidateService.ListCandidate(input)
 
@@ -80,7 +80,7 @@ func (h *CandidateHandler) ListCandidateToPosition(c *gin.Context) {
 		ErrorMessage := gin.H{
 			"errors": err.Error(),
 		}
-		response := helper.APIResponse("Fail Get Data", http.StatusBadRequest, "errors", ErrorMessage)
+		response := helper.APIResponse("Fail Get Data", http.StatusForbidden, "errors", ErrorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -92,7 +92,7 @@ func (h *CandidateHandler) UpdateCandidate(c *gin.Context) {
 
 	var input Candidate.DetailCandidateInput
 
-	err := c.ShouldBindUri(input)
+	err := c.ShouldBindUri(&input)
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -122,8 +122,8 @@ func (h *CandidateHandler) UpdateCandidate(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("CurrentUser").(models.Users)
-	inputdata.User = currentUser
+	currentUser := c.MustGet("CurrentOwner").(models.Company)
+	input.Company = currentUser
 
 	NewCandidate, err := h.CandidateService.UpdateCandidateStatus(input, inputdata)
 

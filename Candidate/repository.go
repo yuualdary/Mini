@@ -60,7 +60,7 @@ func (r *repository) ListCandidate(positioid string) ([]models.Candidate, error)
 
 	var candidate []models.Candidate
 
-	err := r.db.Preload("position").Where("position_id = ?", positioid).Find(&candidate).Error
+	err := r.db.Preload("Positions").Where("position_id = ?", positioid).Find(&candidate).Error
 
 	if err != nil {
 		return []models.Candidate{}, err

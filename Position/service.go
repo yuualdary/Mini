@@ -36,6 +36,9 @@ func (s *service) CreatePosition(input CreatePositionInput) (models.Position, er
 	Create.ID = generatornumber.NewUUID()
 	Create.PositionName = input.PositionName
 	Create.PositionDescription = input.PositionDescription
+	Create.PositionFee = input.PositionFee
+	Create.PositionLength = input.PositionLength
+	Create.PositionRequirement = input.PositionRequirement
 	Create.CompanyID = FindUser.ID
 	NewPosition, err := s.repository.CreatePosiion(Create)
 
@@ -56,6 +59,9 @@ func (s *service) UpdatePosition(inputid DetailPositionInput, inputdata CreatePo
 
 	FindDetail.PositionName = inputdata.PositionName
 	FindDetail.PositionDescription = inputdata.PositionDescription
+	FindDetail.PositionLength = inputdata.PositionLength
+	FindDetail.PositionFee = inputdata.PositionFee
+	FindDetail.PositionRequirement = inputdata.PositionRequirement
 	NewPosition, err := s.repository.CreatePosiion(FindDetail)
 
 	if err != nil {

@@ -9,6 +9,6 @@ type CreateCandidateInput struct {
 }
 
 type DetailCandidateInput struct {
-	ID   string `uri:"id"  binding:"required"`
-	User models.Users
+	ID      string `uri:"id"  binding:"required"`
+	Company models.Company
 }
