@@ -2,6 +2,7 @@ package Candidate
 
 import (
 	"errors"
+	"fmt"
 	"pasarwarga/Company"
 	"pasarwarga/Position"
 	"pasarwarga/Users"
@@ -34,6 +35,16 @@ func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate,
 	if err != nil {
 		return models.Candidate{}, errors.New("User Not Found")
 	}
+	//check apakah current id sudah pernah dipakai
+
+	CheckCandidate, _ := s.repository.DetailCandidatePosition(input.PositionID)
+
+	fmt.Println(FindUser.ID)
+	fmt.Println(CheckCandidate.UserID)
+	if FindUser.ID == CheckCandidate.UserID && CheckCandidate.PositionID == input.PositionID && CheckCandidate.UserID != "" {
+
+		return models.Candidate{}, errors.New("You've applied in this position")
+	}
 
 	CreateCandidate := models.Candidate{}
 	CreateCandidate.ID = generatornumber.NewUUID()
@@ -41,7 +52,8 @@ func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate,
 	CreateCandidate.PositionID = input.PositionID
 	CreateCandidate.UserID = FindUser.ID
 	CreateCandidate.UpdatedByID = FindUser.ID
-	//buat validasi gabisa apply 2x
+	//buat validasi gabisa apply 2x done;
+	//detail list cabdidate, formatter total
 	//buat pdfnya
 	SaveCandidate, err := s.repository.CreateCandidate(CreateCandidate)
 

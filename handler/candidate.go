@@ -111,10 +111,9 @@ func (h *CandidateHandler) UpdateCandidate(c *gin.Context) {
 	err = c.ShouldBindJSON(input)
 
 	if err != nil {
-		errors := helper.FormatValidationError(err)
 
 		ErrorMessage := gin.H{
-			"error": errors,
+			"errors": err.Error(),
 		}
 
 		response := helper.APIResponse("Fail Get Data From Candidate Input", http.StatusBadRequest, "error", ErrorMessage)
