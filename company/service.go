@@ -12,6 +12,7 @@ type Service interface {
 	UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error)
 	ListCompany(value string) ([]models.Company, error)
 	DetailCompany(input CompanyFindIDInput) (models.Company, error)
+	CompanyOwner(ID string) (models.Company, error)
 }
 
 type service struct {
@@ -108,4 +109,13 @@ func (s *service) ListCompany(value string) ([]models.Company, error) {
 	}
 
 	return ListCompany, nil
+}
+func (s *service) CompanyOwner(ID string) (models.Company, error) {
+
+	FindOwner, err := s.repository.FindCompanyOwner(ID)
+
+	if err != nil {
+		return FindOwner, err
+	}
+	return FindOwner, nil
 }

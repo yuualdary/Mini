@@ -58,7 +58,7 @@ func (r *repository) DetailPosition(ID string) (models.Position, error) {
 
 	var position models.Position
 
-	err := r.db.Preload("companies").Where("id = ?", ID).Find(&position).Error
+	err := r.db.Preload("Companies").Where("id = ?", ID).Find(&position).Error
 
 	if err != nil {
 		return position, err

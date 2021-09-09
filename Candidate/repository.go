@@ -9,8 +9,8 @@ import (
 type Repository interface {
 	CreateCandidate(candidate models.Candidate) (models.Candidate, error)
 	UpdateCandidate(candidate models.Candidate) (models.Candidate, error)
-	DetailCandidate(ID string) (models.Candidate, error)
-	ListCandidate() ([]models.Candidate, error)
+	DetailCandidatePosition(ID string) (models.Candidate, error)
+	ListCandidate(positionid string) ([]models.Candidate, error)
 }
 
 type repository struct {
@@ -42,11 +42,11 @@ func (r *repository) UpdateCandidate(candidate models.Candidate) (models.Candida
 	return candidate, nil
 }
 
-func (r *repository) DetailCandidate(ID string) (models.Candidate, error) {
+func (r *repository) DetailCandidatePosition(ID string) (models.Candidate, error) {
 
 	var candidate models.Candidate
 
-	err := r.db.Where("id = ? ", ID).Find(&candidate).Error
+	err := r.db.Where("position_id= ? ", ID).Find(&candidate).Error
 
 	if err != nil {
 		return candidate, err
@@ -56,11 +56,11 @@ func (r *repository) DetailCandidate(ID string) (models.Candidate, error) {
 
 }
 
-func (r *repository) ListCandidate() ([]models.Candidate, error) {
+func (r *repository) ListCandidate(positioid string) ([]models.Candidate, error) {
 
 	var candidate []models.Candidate
 
-	err := r.db.Find(&candidate).Error
+	err := r.db.Preload("Positions").Where("position_id = ?", positioid).Find(&candidate).Error
 
 	if err != nil {
 		return []models.Candidate{}, err

@@ -11,6 +11,8 @@ type Repository interface {
 	FindCategoryID(CategoryID string) (models.Category, error)
 	UpdateCategory(category models.Category) (models.Category, error)
 	ListCategory() ([]models.Category, error)
+	ListStatus() ([]models.Category, error)
+	ListCategoryStatus() ([]models.Category, error)
 	DeleteCategory(CategoryID string) error
 }
 
@@ -50,6 +52,19 @@ func (r *repository) FindCategoryID(CategoryID string) (models.Category, error) 
 
 }
 
+func (r *repository) ListStatus() ([]models.Category, error) {
+
+	var category []models.Category
+
+	err := r.db.Where("categoryprefix = ?", "STATUS").Error
+
+	if err != nil {
+		return []models.Category{}, nil
+	}
+	return category, nil
+
+}
+
 func (r *repository) UpdateCategory(category models.Category) (models.Category, error) {
 
 	err := r.db.Save(&category).Error
@@ -67,6 +82,21 @@ func (r *repository) ListCategory() ([]models.Category, error) {
 	var category []models.Category
 
 	err := r.db.Find(&category).Error
+
+	if err != nil {
+		return category, err
+
+	}
+
+	return category, nil
+
+}
+
+func (r *repository) ListCategoryStatus() ([]models.Category, error) {
+
+	var category []models.Category
+
+	err := r.db.Where("category_prefix = CANDIDATESTATUS").Find(&category).Error
 
 	if err != nil {
 		return category, err
