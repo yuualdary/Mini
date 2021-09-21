@@ -36,6 +36,8 @@ func (h *CompanyHandler) CreateCompany(c *gin.Context) {
 	}
 	currentUser := c.MustGet("CurrentUser").(models.Users)
 	input.User = currentUser
+	fmt.Println(input)
+
 	NewCategory, err := h.CompanyService.CreateCompany(input)
 
 	if err != nil {

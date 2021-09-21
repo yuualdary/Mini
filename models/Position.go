@@ -8,6 +8,9 @@ type Position struct {
 	PositionFee         int
 	PositionLength      int
 	PositionRequirement string
-	CompanyID           string  `gorm:"type:varchar(191)"`
+	Candidates []Candidate
+	
+
+	CompanyID      string  `gorm:"type:varchar(191)"`
 	Companies           Company `gorm:"foreignKey:CompanyID"`
 }

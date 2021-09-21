@@ -17,3 +17,11 @@ type CompanyFindIDInput struct {
 type SearchCompany struct {
 	Value string `uri:"companyname"`
 }
+
+type CreateCompanyLocInput struct {
+
+	CompanyID string `json:"companyid" binding:"required"`
+	LocationID string `json:"locationid" binding:"required"`
+
+
+}

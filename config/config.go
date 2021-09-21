@@ -22,6 +22,7 @@ func ConnectDatabase() {
 		Location  = models.Locations{}
 		Position  = models.Position{}
 		Candidate = models.Candidate{}
+		PositionCategory = models.PositionCategory{}
 	)
 
 	dsn := "root:@tcp(127.0.0.1:3306)/pasarwarga?charset=utf8mb4&parseTime=True&loc=Local"
@@ -32,7 +33,7 @@ func ConnectDatabase() {
 		log.Fatal(err.Error())
 	}
 
-	db.AutoMigrate(&Article, &Category, &Users, &Otps, &Company, &Location, &Position, &Candidate)
+	db.AutoMigrate(&Article, &Category, &Users, &Otps, &Company, &Location, &Position, &Candidate, &PositionCategory)
 
 	fmt.Println("Connecting To Database...")
 

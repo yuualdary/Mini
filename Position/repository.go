@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	CreatePosiion(positiion models.Position) (models.Position, error)
 	UpdatePosition(position models.Position) (models.Position, error)
+	CreateTagPosition(positiontag models.PositionCategory)(models.PositionCategory, error)
 	ListPosition() ([]models.Position, error)
 	DetailPosition(ID string) (models.Position, error)
 	DeletePosition(ID string) error
@@ -32,6 +33,18 @@ func (r *repository) CreatePosiion(positiion models.Position) (models.Position, 
 	return positiion, nil
 }
 
+func (r *repository)CreateTagPosition(positiontag models.PositionCategory)(models.PositionCategory, error){
+	
+	err := r.db.Create(&positiontag).Error
+
+	if err != nil {
+		return positiontag, err
+	}
+	return positiontag, nil
+
+}
+
+
 func (r *repository) UpdatePosition(positiion models.Position) (models.Position, error) {
 
 	err := r.db.Save(&positiion).Error
@@ -46,7 +59,7 @@ func (r *repository) ListPosition() ([]models.Position, error) {
 
 	var position []models.Position
 
-	err := r.db.Find(&position).Error
+	err := r.db.Preload("Companies").Preload("Candidates").Find(&position).Error
 
 	if err != nil {
 		return []models.Position{}, err

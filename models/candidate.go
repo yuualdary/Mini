@@ -12,8 +12,7 @@ type Candidate struct {
 	Categories  Category `gorm:"foreignKey:CategoryID"`
 	UpdatedByID string   `gorm:"type:varchar(191)"`
 	UsersFrom   Users    `gorm:"foreignKey:UpdatedByID"`
-
-	CandidateFile string
+	CandidateFile string//buat file table sendiri
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }

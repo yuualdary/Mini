@@ -5,10 +5,10 @@ import (
 	"pasarwarga/Users"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
-)
 
 type Service interface {
 	CreateCompany(input CreateCompanyInput) (models.Company, error)
+//	CreateCompanyLocation(input CreateCompanyLocInput)()
 	UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error)
 	ListCompany(value string) ([]models.Company, error)
 	DetailCompany(input CompanyFindIDInput) (models.Company, error)
@@ -25,7 +25,6 @@ func NewService(repository Repository, UserRepository Users.Repository) *service
 }
 
 func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error) {
-
 	IsUserGetCompany, err := s.repository.FindCompanyOwner(input.User.ID)
 
 	if err != nil {
@@ -36,18 +35,18 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 		return IsUserGetCompany, errors.New("You already have a company")
 	}
 
-	IsUserExist, err := s.UserRepository.FindUserById(input.User.ID)
+	// IsUserExist, err := s.UserRepository.FindUserById(input.User.ID)
 
-	if IsUserExist.ID != input.User.ID {
+	// if IsUserExist.ID != input.User.ID {
 
-		return models.Company{}, errors.New("User Not Registered")
-	}
+	// 	return models.Company{}, errors.New("User Not Registered")
+	// }
 
 	CreateCompany := models.Company{}
 	CreateCompany.ID = generatornumber.NewUUID()
 	CreateCompany.CompanyName = input.CompanyName
 	CreateCompany.CompanyDescription = input.CompanyDescription
-	CreateCompany.UserID = IsUserExist.ID
+	CreateCompany.UserID = input.User.ID
 
 	Save, err := s.repository.CreateCompany(CreateCompany)
 

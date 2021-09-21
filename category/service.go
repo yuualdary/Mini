@@ -12,6 +12,7 @@ type Service interface {
 	CreateCategory(input CategoryInput) (models.Category, error)
 	DetailCategory(input CategoryIDInput) (models.Category, error)
 	ListCategory() ([]models.Category, error)
+	ListPositionTag()([]models.Category,error)
 	UpdateCategory(input CategoryIDInput, categorydata CategoryInput) (models.Category, error)
 	DeleteCategory(input CategoryIDInput) error
 }
@@ -85,6 +86,19 @@ func (s *service) UpdateCategory(input CategoryIDInput, categorydata CategoryInp
 	return GetCurrentID, nil
 
 }
+
+func (s *service)ListPositionTag()([]models.Category,error){
+
+	ListAllPositionTag, err := s.repository.ListPositionTag()
+
+	if err != nil {
+
+		return ListAllPositionTag, err
+	}
+
+	return ListAllPositionTag, nil
+}
+
 
 func (s *service) DeleteCategory(input CategoryIDInput) error {
 

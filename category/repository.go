@@ -12,6 +12,7 @@ type Repository interface {
 	UpdateCategory(category models.Category) (models.Category, error)
 	ListCategory() ([]models.Category, error)
 	ListStatus() ([]models.Category, error)
+	ListPositionTag() ([]models.Category, error)
 	ListCategoryStatus() ([]models.Category, error)
 	DeleteCategory(CategoryID string) error
 }
@@ -97,6 +98,21 @@ func (r *repository) ListCategoryStatus() ([]models.Category, error) {
 	var category []models.Category
 
 	err := r.db.Where("category_prefix = CANDIDATESTATUS").Find(&category).Error
+
+	if err != nil {
+		return category, err
+
+	}
+
+	return category, nil
+
+}
+
+func (r *repository) ListPositionTag() ([]models.Category, error){
+
+	var category []models.Category
+
+	err := r.db.Where("category_prefix = ?","POSITIONTAG").Find(&category).Error
 
 	if err != nil {
 		return category, err
