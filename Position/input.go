@@ -15,3 +15,7 @@ type DetailPositionInput struct {
 	ID    string `uri:"id" binding:"required"`
 	Users models.Users
 }
+type CreateTagPosition struct {
+	ID    string `json:"id" binding:"required"`
+	Users               models.Users
+}

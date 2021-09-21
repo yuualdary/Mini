@@ -6,3 +6,9 @@ type Category struct {
 	CategoryName   string
 	CategorySlug   string
 }
+
+type PositionCategory struct{
+	CategoryID string `gorm:"primary_key"`
+	PositionID string `gorm:"primary_key"`
+}
+//buat tag di detail position

@@ -118,6 +118,23 @@ func (h *CategoryHandler) ListCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (h *CategoryHandler) ListPositionTag(c *gin.Context) {
+
+	ListPositionTag, err := h.CategoryService.ListPositionTag()
+
+	if err != nil {
+
+		ErrorMessage := gin.H{
+			"errors": err.Error(),
+		}
+		response := helper.APIResponse("Fail Get Data", http.StatusBadRequest, "errors", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.APIResponse("List Category", http.StatusOK, "success", ListPositionTag)
+	c.JSON(http.StatusOK, response)
+}
+
 func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 
 	var inputid category.CategoryIDInput

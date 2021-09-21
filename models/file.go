@@ -8,3 +8,6 @@ type file struct {
 	User    Users  `gorm:"foreignKey:UsersID"`
 	Expired time.Time
 }
+
+
+

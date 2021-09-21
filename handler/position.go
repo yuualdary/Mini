@@ -35,7 +35,7 @@ func (h *PositionHandler) CreatePosition(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("CurrentUser").(models.Users)
+	currentUser := c.MustGet("CurrentOwner").(models.Users)//get owner
 	input.Users = currentUser
 	NewPosition, err := h.PositionService.CreatePosition(input)
 
@@ -85,7 +85,8 @@ func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
+	currentUser := c.MustGet("CurrentUser").(models.Users)//get owner
+	input.Users = currentUser
 	NewPosition, err := h.PositionService.UpdatePosition(input, inputdata)
 
 	if err != nil {
@@ -102,7 +103,62 @@ func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", NewPosition)
 	c.JSON(http.StatusOK, response)
 
+	
 }
+
+func (h *PositionHandler) CreatePositionTag(c *gin.Context) {
+
+	var input Position.DetailPositionInput
+
+	err := c.ShouldBindUri(&input)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var inputdata Position.CreateTagPosition
+
+	err = c.ShouldBindJSON(&inputdata)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	currentUser := c.MustGet("CurrentUser").(models.Users)//get owner
+	input.Users = currentUser
+	NewPosition, err := h.PositionService.CreateTagPosition(input, inputdata)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", NewPosition)
+	c.JSON(http.StatusOK, response)
+
+}
+
 
 func (h *PositionHandler) ListPosition(c *gin.Context) {
 
