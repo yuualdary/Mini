@@ -7,8 +7,9 @@ type Category struct {
 	CategorySlug   string
 }
 
-type PositionCategory struct{
+type PositionCategory struct {
 	CategoryID string `gorm:"primary_key"`
 	PositionID string `gorm:"primary_key"`
 }
+
 //buat tag di detail position

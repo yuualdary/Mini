@@ -19,7 +19,6 @@ type Service interface {
 type service struct {
 	repository        Repository
 	CompanyRepository Company.Repository
-
 }
 
 func NewService(repository Repository, CompanyRepository Company.Repository) *service {

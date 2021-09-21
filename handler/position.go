@@ -159,7 +159,6 @@ func (h *PositionHandler) CreatePositionTag(c *gin.Context) {
 
 }
 
-
 func (h *PositionHandler) ListPosition(c *gin.Context) {
 
 	ListPosition, err := h.PositionService.ListPosition()
