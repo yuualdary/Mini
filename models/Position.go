@@ -8,6 +8,7 @@ type Position struct {
 	PositionFee         int
 	PositionLength      int
 	PositionRequirement string
+	PositionSlug string
 	Candidates []Candidate 
 	PositionCategories []PositionCategory 
 

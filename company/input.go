@@ -7,6 +7,9 @@ import (
 type CreateCompanyInput struct {
 	CompanyName        string `json:"companyname" binding:"required"`
 	CompanyDescription string `json:"companydescription" binding:"required"`
+	CompanyType string `json:"companytype"`
+	LocationID string `json:"locationid"`
+
 	User               models.Users
 }
 

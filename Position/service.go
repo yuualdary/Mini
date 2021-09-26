@@ -5,6 +5,8 @@ import (
 	"pasarwarga/Company"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
+
+	"github.com/gosimple/slug"
 )
 
 type Service interface {
@@ -102,6 +104,8 @@ func (s *service) CreatePosition(input CreatePositionInput) (models.Position, er
 	Create.PositionLength = input.PositionLength
 	Create.PositionRequirement = input.PositionRequirement
 	Create.CompanyID = FindUser.ID
+	Create.PositionSlug = slug.Make(input.PositionName)
+
 	NewPosition, err := s.repository.CreatePosiion(Create)
 
 	if err != nil {
@@ -135,13 +139,14 @@ func (s *service) UpdatePosition(inputid DetailPositionInput, inputdata CreatePo
 	FindDetail.PositionLength = inputdata.PositionLength
 	FindDetail.PositionFee = inputdata.PositionFee
 	FindDetail.PositionRequirement = inputdata.PositionRequirement
-	NewPosition, err := s.repository.CreatePosiion(FindDetail)
+	FindDetail.PositionSlug = slug.Make(inputdata.PositionName)
+	Update, err := s.repository.UpdatePosition(FindDetail)
 
 	if err != nil {
-		return NewPosition, err
+		return Update, err
 	}
 
-	return NewPosition, nil
+	return Update, nil
 }
 
 func (s *service) ListPosition() ([]models.Position, error) {

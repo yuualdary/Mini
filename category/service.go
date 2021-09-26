@@ -13,6 +13,7 @@ type Service interface {
 	DetailCategory(input CategoryIDInput) (models.Category, error)
 	ListCategory() ([]models.Category, error)
 	ListPositionTag()([]models.Category,error)
+	ListJobTypeTag()([]models.Category,error)
 	UpdateCategory(input CategoryIDInput, categorydata CategoryInput) (models.Category, error)
 	DeleteCategory(input CategoryIDInput) error
 }
@@ -99,6 +100,24 @@ func (s *service)ListPositionTag()([]models.Category,error){
 
 	return ListAllPositionTag, nil
 }
+
+//jobtag connect ke companyID one to one
+
+
+func (s *service)ListJobTypeTag()([]models.Category,error){
+
+	ListAllJobTag, err := s.repository.ListJobTypeTag()
+
+	if err != nil {
+
+		return ListAllJobTag, err
+	}
+
+	return ListAllJobTag, nil
+
+
+}
+
 
 
 func (s *service) DeleteCategory(input CategoryIDInput) error {
