@@ -12,7 +12,7 @@ type Repository interface {
 	UpdateCompany(company models.Company) (models.Company, error)
 	FindCompanyID(CompanyID string) (models.Company, error)
 	ListCompany(value string) ([]models.Company, error)
-	FindCompanyOwner(UserID string) (models.Company, error)
+	FindCompanyOwner(CompanyID string) (models.Company, error)
 	//	DeleteCompany(company models.Company) error
 	//FindUserWithCompany(ID string) (models.Company, error)
 }
@@ -79,11 +79,11 @@ func (r *repository) FindCompanyID(CompanyID string) (models.Company, error) {
 	return company, nil
 }
 
-func (r *repository) FindCompanyOwner(UserID string) (models.Company, error) {
+func (r *repository) FindCompanyOwner(CompanyID string) (models.Company, error) {
 
 	var company models.Company
 
-	err := r.db.Where("user_id = ?", UserID).Find(&company).Error
+	err := r.db.Where("id = ?", CompanyID).Find(&company).Error
 
 	if err != nil {
 		return company, err

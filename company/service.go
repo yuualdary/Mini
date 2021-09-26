@@ -2,10 +2,14 @@ package Company
 
 import (
 	"errors"
+	"fmt"
+
 	"pasarwarga/Users"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 
+	"github.com/gosimple/slug"
+)
 type Service interface {
 	CreateCompany(input CreateCompanyInput) (models.Company, error)
 //	CreateCompanyLocation(input CreateCompanyLocInput)()
@@ -47,6 +51,11 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 	CreateCompany.CompanyName = input.CompanyName
 	CreateCompany.CompanyDescription = input.CompanyDescription
 	CreateCompany.UserID = input.User.ID
+	CreateCompany.CategoryID = input.CompanyType
+	CreateCompany.LocationID = input.LocationID
+
+	CreateCompany.CompanySlug = slug.Make(input.CompanyName)
+
 
 	Save, err := s.repository.CreateCompany(CreateCompany)
 
@@ -60,14 +69,19 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 
 func (s *service) UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error) {
 
-	IsUserGetCompany, err := s.repository.FindCompanyOwner(input.User.ID)
+	IsUserGetCompany, err := s.repository.FindCompanyOwner(inputid.ID)
 
 	if err != nil {
 		return IsUserGetCompany, err
 	}
-
+	
+	fmt.Println(IsUserGetCompany.ID)
+	fmt.Println(inputid.ID)
+//positon detail add type company
+//status candidate
+//company list position
 	if IsUserGetCompany.UserID != input.User.ID {
-		return IsUserGetCompany, errors.New("Cannot Update Company")
+		return IsUserGetCompany, errors.New("Forbidden Access")
 	}
 
 	UpdateCompany, err := s.repository.FindCompanyID(inputid.ID)
@@ -78,6 +92,9 @@ func (s *service) UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDI
 
 	UpdateCompany.CompanyName = input.CompanyName
 	UpdateCompany.CompanyDescription = input.CompanyDescription
+	UpdateCompany.CompanySlug = slug.Make(input.CompanyName)
+	UpdateCompany.CategoryID = input.CompanyType
+	UpdateCompany.LocationID = input.LocationID
 
 	Save, err := s.repository.UpdateCompany(UpdateCompany)
 

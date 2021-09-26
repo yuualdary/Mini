@@ -11,6 +11,7 @@ type Repository interface {
 	UpdatePosition(position models.Position) (models.Position, error)
 	CreateTagPosition(positiontag models.PositionCategory)(models.PositionCategory, error)
 	ListPosition() ([]models.Position, error)
+	ListPositionTag(ID string)([]models.PositionCategory,error)
 	DetailPosition(ID string) (models.Position, error)
 	DeletePosition(ID string) error
 }
@@ -67,15 +68,31 @@ func (r *repository) ListPosition() ([]models.Position, error) {
 
 	return position, nil
 }
+
+func(r *repository)	ListPositionTag(ID string)([]models.PositionCategory,error){
+
+	var positiion []models.PositionCategory
+
+	err := r.db.Where("position_id = ? ",ID).Find(&positiion).Error
+
+	if err != nil {
+		return positiion, err
+	}
+	return positiion, nil
+}
+
 func (r *repository) DetailPosition(ID string) (models.Position, error) {
 
 	var position models.Position
 
-	err := r.db.Preload("Companies").Where("id = ?", ID).Find(&position).Error
-
+	err := r.db.Preload("Companies").Preload("PositionCategories").Preload("Candidates").Where("id = ? ", ID).Find(&position).Error
+	
+			
 	if err != nil {
 		return position, err
 	}
+	
+
 
 	return position, nil
 }

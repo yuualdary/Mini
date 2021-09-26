@@ -14,6 +14,8 @@ type Repository interface {
 	ListStatus() ([]models.Category, error)
 	ListPositionTag() ([]models.Category, error)
 	ListCategoryStatus() ([]models.Category, error)
+	//kayaknya bisa pakai string trus read query pakai stringnya, tapi sepertinya berbahaya
+	ListJobTypeTag()([]models.Category, error)
 	DeleteCategory(CategoryID string) error
 }
 
@@ -52,6 +54,8 @@ func (r *repository) FindCategoryID(CategoryID string) (models.Category, error) 
 	return category, nil
 
 }
+
+
 
 func (r *repository) ListStatus() ([]models.Category, error) {
 
@@ -132,4 +136,19 @@ func (r *repository) DeleteCategory(CategoryID string) error {
 		return err
 	}
 	return nil
+}
+
+func(r *repository)ListJobTypeTag()([]models.Category, error){
+	
+	var category []models.Category
+
+	err := r.db.Where("category_prefix = ?","JOBTYPETAG").Find(&category).Error
+
+	if err != nil {
+		return category, err
+
+	}
+
+	return category, nil
+
 }

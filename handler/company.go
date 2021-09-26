@@ -78,6 +78,7 @@ func (h *CompanyHandler) UpdateCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	fmt.Println("test")
 	currentUser := c.MustGet("CurrentUser").(models.Users)
 	input.User = currentUser
 	NewCategory, err := h.CompanyService.UpdateCompany(input, inputid)

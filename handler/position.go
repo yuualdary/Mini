@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"pasarwarga/Position"
+	"pasarwarga/category"
 	"pasarwarga/helper"
 	"pasarwarga/models"
 
@@ -11,10 +12,12 @@ import (
 
 type PositionHandler struct {
 	PositionService Position.Service
+	CategoryService category.Service
+
 }
 
-func NewPositionHandler(PositionService Position.Service) *PositionHandler {
-	return &PositionHandler{PositionService}
+func NewPositionHandler(PositionService Position.Service,CategoryService category.Service) *PositionHandler {
+	return &PositionHandler{PositionService,CategoryService}
 }
 
 func (h *PositionHandler) CreatePosition(c *gin.Context) {
@@ -135,7 +138,7 @@ func (h *PositionHandler) CreatePositionTag(c *gin.Context) {
 			"error": errors,
 		}
 
-		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		response := helper.APIResponse("Fail Get Data From Input", http.StatusBadRequest, "error", ErrorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -144,17 +147,15 @@ func (h *PositionHandler) CreatePositionTag(c *gin.Context) {
 	NewPosition, err := h.PositionService.CreateTagPosition(input, inputdata)
 
 	if err != nil {
-		errors := helper.FormatValidationError(err)
 
 		ErrorMessage := gin.H{
-			"error": errors,
+			"errors": err.Error(),
 		}
-
-		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		response := helper.APIResponse("Fail Get Data", http.StatusBadRequest, "errors", ErrorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", NewPosition)
+	response := helper.APIResponse("Detail Position Data", http.StatusOK, "success", NewPosition)
 	c.JSON(http.StatusOK, response)
 
 }
@@ -210,7 +211,21 @@ func (h *PositionHandler) DetailPosition(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatDetailPosition(FindPosition))
+
+	GetCategory, err := h.CategoryService.ListCategory()
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success",Position.FormatDetailPosition(FindPosition,GetCategory))
 	c.JSON(http.StatusOK, response)
 
 }

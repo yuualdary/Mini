@@ -5,6 +5,8 @@ import (
 	"pasarwarga/Company"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
+
+	"github.com/gosimple/slug"
 )
 
 type Service interface {
@@ -29,11 +31,35 @@ func (s *service)CreateTagPosition(inputid DetailPositionInput, inputtag CreateT
 
 	FindDetail, err := s.repository.DetailPosition(inputid.ID)
 	//validasi gabisa 2x add tag
+	//sebenarnya udah bisa auto karna gabisa 2 PK tapi dibuat validasi agar bagus
 	//formatter detail position dengan tag
 
 	if err != nil {
 		return models.PositionCategory{}, err
 	}
+
+
+	FindPosition,err := s.repository.ListPositionTag(FindDetail.ID)
+
+	if err != nil{
+		return models.PositionCategory{}, err
+	}
+
+	// if FindPosition.PositionID != FindDetail.ID{
+
+	// 	return models.PositionCategory{},errors.New("Cannot Update Another Position")
+	// }
+
+	for _, listposition := range FindPosition{
+
+
+	if listposition.CategoryID == inputtag.ID{
+
+		return models.PositionCategory{}, errors.New("Cannot add same category")
+	}
+}
+
+
 
 	FindUser, err := s.CompanyRepository.FindCompanyOwner(inputid.Users.ID)
 
@@ -78,6 +104,8 @@ func (s *service) CreatePosition(input CreatePositionInput) (models.Position, er
 	Create.PositionLength = input.PositionLength
 	Create.PositionRequirement = input.PositionRequirement
 	Create.CompanyID = FindUser.ID
+	Create.PositionSlug = slug.Make(input.PositionName)
+
 	NewPosition, err := s.repository.CreatePosiion(Create)
 
 	if err != nil {
@@ -111,13 +139,14 @@ func (s *service) UpdatePosition(inputid DetailPositionInput, inputdata CreatePo
 	FindDetail.PositionLength = inputdata.PositionLength
 	FindDetail.PositionFee = inputdata.PositionFee
 	FindDetail.PositionRequirement = inputdata.PositionRequirement
-	NewPosition, err := s.repository.CreatePosiion(FindDetail)
+	FindDetail.PositionSlug = slug.Make(inputdata.PositionName)
+	Update, err := s.repository.UpdatePosition(FindDetail)
 
 	if err != nil {
-		return NewPosition, err
+		return Update, err
 	}
 
-	return NewPosition, nil
+	return Update, nil
 }
 
 func (s *service) ListPosition() ([]models.Position, error) {
