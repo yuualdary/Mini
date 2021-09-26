@@ -5,6 +5,7 @@ import (
 	"pasarwarga/Users"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
+)
 type Service interface {
 	CreateCompany(input CreateCompanyInput) (models.Company, error)
 //	CreateCompanyLocation(input CreateCompanyLocInput)()

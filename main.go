@@ -51,7 +51,7 @@ func main() {
 	CompanyHandler := handler.NewCompanyHandler(CompanyService)
 	OtpHandler := handler.NewOtpHandler(OtpService)
 	LocationHandler := handler.NewLocationHandler(LocationService)
-	PositionHandler := handler.NewPositionHandler(PositionService)
+	PositionHandler := handler.NewPositionHandler(PositionService,CategoryService)
 	CandidateHandler := handler.NewCandidateHandler(CandidateService)
 
 	router.Static("/images", "./images")

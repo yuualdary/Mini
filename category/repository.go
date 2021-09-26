@@ -14,6 +14,7 @@ type Repository interface {
 	ListStatus() ([]models.Category, error)
 	ListPositionTag() ([]models.Category, error)
 	ListCategoryStatus() ([]models.Category, error)
+	//ListCategoryWith
 	DeleteCategory(CategoryID string) error
 }
 
@@ -52,6 +53,8 @@ func (r *repository) FindCategoryID(CategoryID string) (models.Category, error) 
 	return category, nil
 
 }
+
+
 
 func (r *repository) ListStatus() ([]models.Category, error) {
 

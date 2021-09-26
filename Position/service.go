@@ -29,11 +29,35 @@ func (s *service)CreateTagPosition(inputid DetailPositionInput, inputtag CreateT
 
 	FindDetail, err := s.repository.DetailPosition(inputid.ID)
 	//validasi gabisa 2x add tag
+	//sebenarnya udah bisa auto karna gabisa 2 PK tapi dibuat validasi agar bagus
 	//formatter detail position dengan tag
 
 	if err != nil {
 		return models.PositionCategory{}, err
 	}
+
+
+	FindPosition,err := s.repository.ListPositionTag(FindDetail.ID)
+
+	if err != nil{
+		return models.PositionCategory{}, err
+	}
+
+	// if FindPosition.PositionID != FindDetail.ID{
+
+	// 	return models.PositionCategory{},errors.New("Cannot Update Another Position")
+	// }
+
+	for _, listposition := range FindPosition{
+
+
+	if listposition.CategoryID == inputtag.ID{
+
+		return models.PositionCategory{}, errors.New("Cannot add same category")
+	}
+}
+
+
 
 	FindUser, err := s.CompanyRepository.FindCompanyOwner(inputid.Users.ID)
 

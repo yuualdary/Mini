@@ -42,6 +42,7 @@ func (s *service) CreateCategory(input CategoryInput) (models.Category, error) {
 
 }
 
+
 func (s *service) DetailCategory(input CategoryIDInput) (models.Category, error) {
 
 	FindCategoryByID, err := s.repository.FindCategoryID(input.ID)
