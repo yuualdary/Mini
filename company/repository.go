@@ -56,7 +56,7 @@ func (r *repository) ListCompany(value string) ([]models.Company, error) {
 	fmt.Println(value + "%")
 	// err := r.db.Preload("Users").Where("company_name LIKE ?", "%"+value+"%").Find(&company).Error
 
-	err := r.db.Where("company_name LIKE ?", "%"+value+"%").Find(&company).Error
+	err := r.db.Preload("Categories").Where("company_name LIKE ?", "%"+value+"%").Find(&company).Error
 
 	if err != nil {
 		return company, err
@@ -70,7 +70,7 @@ func (r *repository) FindCompanyID(CompanyID string) (models.Company, error) {
 
 	var company models.Company
 
-	err := r.db.Where("id = ?", CompanyID).Find(&company).Error
+	err := r.db.Preload("Categories").Where("id = ?", CompanyID).Find(&company).Error
 
 	if err != nil {
 		return company, err

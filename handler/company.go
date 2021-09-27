@@ -119,7 +119,7 @@ func (h *CompanyHandler) DetailCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", FindDetail)
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Company.FormatCompany(FindDetail))
 	c.JSON(http.StatusOK, response)
 }
 func (h *CompanyHandler) ListCompany(c *gin.Context) {

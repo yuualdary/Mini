@@ -1,12 +1,20 @@
 package Company
 
-import "pasarwarga/models"
+import (
+	"pasarwarga/models"
+)
 
 type CompanyFormatter struct {
 	ID                 string `json:"id"`
 	CompanyName        string `json:"companyname"`
 	CompanyDescription string `json:"companydescription"`
+	Type CompanyType
 	// User               CompanyOwner `json:"user"`
+}
+
+type CompanyType struct {
+	ID string `json:"id"`
+	CompanyType string `json:"companytype"`
 }
 
 type CompanyOwner struct {
@@ -20,12 +28,22 @@ func FormatCompany(company models.Company) CompanyFormatter {
 	CompanyFormatter.CompanyName = company.CompanyName
 	CompanyFormatter.CompanyDescription = company.CompanyDescription
 
+
+	category := company.Categories
+
+	CompanyTypeFormatter := CompanyType{}
+
+	CompanyTypeFormatter.ID = category.ID
+	CompanyTypeFormatter.CompanyType = category.CategoryName
+
 	// user := company.Users
 
 	// GetOwner := CompanyOwner{}
 	// GetOwner.User = user.Name
 
 	// CompanyFormatter.User = GetOwner
+
+	CompanyFormatter.Type = CompanyTypeFormatter
 
 	return CompanyFormatter
 }

@@ -19,6 +19,7 @@ type DetailPositionFormatter struct{
 	PositionRequirement string `json:"requirement"`
 	PositionLength int `json:"length"`
 	Company             CompanyName `json:"company"`
+	CompanyType CompanyType `json:"type"`
 	Tag	[]PositionTag `json:"tag"`
 	Count int `json:"candidate"`
 
@@ -30,6 +31,11 @@ type PositionTag struct{
 	ID          string `json:"id"`
 	PositionTag string `json:"tag"`
 }
+type CompanyType struct{
+	ID          string `json:"id"`
+	CompanyType string `json:"companytype"`
+}
+
 type CompanyName struct {
 	ID          string `json:"id"`
 	CompanyName string `json:"companyname"`
@@ -57,6 +63,27 @@ func FormatDetailPosition(position models.Position, category []models.Category) 
 	companyname.ID = company.ID
 	companyname.CompanyName = company.CompanyName
 	DetailPositionFormatter.Company = companyname
+
+
+
+	if position.CompanyID != "" {
+
+		
+		for _, listjobtype := range category{
+			
+			if listjobtype.ID == company.CategoryID{
+			//	fmt.Println(listjobtype.CategoryName)
+
+			//	fmt.Println(company.CategoryID)
+					companytype := CompanyType{}
+					companytype.ID = listjobtype.ID
+					companytype.CompanyType = listjobtype.CategoryName
+					DetailPositionFormatter.CompanyType = companytype
+					
+			}
+		}
+	}
+
 
 
 	if (len(position.Candidates)>0){
