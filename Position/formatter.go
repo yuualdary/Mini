@@ -4,6 +4,23 @@ import (
 	"pasarwarga/models"
 )
 
+
+
+type CompanyFormatter struct {
+	ID                 string `json:"id"`
+	CompanyName        string `json:"companyname"`
+	CompanyDescription string `json:"companydescription"`
+	SubPosition []SubPositionFormatter `json:"companyposition"`
+
+	// User               CompanyOwner `json:"user"`
+
+}
+
+type SubPositionFormatter struct {
+	ID                  string      `json:"id"`
+	PositionName        string      `json:"positionname"`
+}
+
 type PositionFormatter struct {
 	ID                  string      `json:"id"`
 	PositionName        string      `json:"positionname"`
@@ -46,6 +63,39 @@ type CandidateCount struct{
 
 	ID string `json:"id"`
 
+}
+
+
+func FormatCompany(position []models.Position) CompanyFormatter {
+
+	CompanyFormatter := CompanyFormatter{}
+
+	
+	for i:= 0 ; i < 1; i++{
+
+		CompanyFormatter.ID = position[0].Companies.ID
+		CompanyFormatter.CompanyName =   position[0].Companies.CompanyName
+		CompanyFormatter.CompanyDescription = position[0].Companies.CompanyDescription
+
+
+	}
+
+	PositionCompany := []SubPositionFormatter{}
+
+
+	for _, listjob := range position{
+
+		SubPos := SubPositionFormatter{}
+		SubPos.ID = listjob.ID
+		SubPos.PositionName = listjob.PositionName
+
+		PositionCompany = append(PositionCompany,SubPos)
+				
+	}
+
+	CompanyFormatter.SubPosition = PositionCompany
+
+	return CompanyFormatter
 }
 
 func FormatDetailPosition(position models.Position, category []models.Category) DetailPositionFormatter {

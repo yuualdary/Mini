@@ -14,6 +14,7 @@ type Service interface {
 	UpdatePosition(inputid DetailPositionInput, inputdata CreatePositionInput) (models.Position, error)
 	CreateTagPosition(inputid DetailPositionInput, inputtag CreateTagPosition) (models.PositionCategory,error)
 	ListPosition() ([]models.Position, error)
+	ListCompanyPosition(CompanyID string) ([]models.Position, error)
 	DetailPosition(inputid DetailPositionInput) (models.Position, error)
 	DeletePosition(input DetailPositionInput) error
 }
@@ -190,5 +191,19 @@ func (s *service) DeletePosition(input DetailPositionInput) error {
 		return errors.New("Not an owner")
 	}
 	return nil
+
+}
+
+
+func (s *service) ListCompanyPosition(CompanyID string) ([]models.Position, error){
+
+	ListPosition,err := s.repository.ListCompanyPosition(CompanyID)
+
+	if err != nil{
+
+		return ListPosition,err
+	}
+
+	return ListPosition,nil
 
 }

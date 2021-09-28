@@ -12,6 +12,14 @@ type CompanyFormatter struct {
 	// User               CompanyOwner `json:"user"`
 }
 
+
+type PositionFormatter struct {
+	ID                  string      `json:"id"`
+	PositionName        string      `json:"positionname"`
+	//Count int `json:"candidate"`
+}
+
+
 type CompanyType struct {
 	ID string `json:"id"`
 	CompanyType string `json:"companytype"`
@@ -44,6 +52,8 @@ func FormatCompany(company models.Company) CompanyFormatter {
 	// CompanyFormatter.User = GetOwner
 
 	CompanyFormatter.Type = CompanyTypeFormatter
+
+	
 
 	return CompanyFormatter
 }

@@ -79,6 +79,7 @@ func main() {
 		v1.PUT("/company/:id", middleware.AuthMiddleware(AuthService, UsersService), CompanyHandler.UpdateCompany)
 		v1.GET("/company/:id", CompanyHandler.DetailCompany)
 		v1.GET("/company", CompanyHandler.ListCompany)
+		v1.GET("/companyposition/:id", PositionHandler.ListCompanyPosition)
 		v1.POST("/location", LocationHandler.CreateLocation)
 		v1.GET("/location", LocationHandler.ListLocation)
 		v1.GET("/position", PositionHandler.ListPosition)
