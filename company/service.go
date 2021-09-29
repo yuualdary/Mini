@@ -79,7 +79,8 @@ func (s *service) UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDI
 	fmt.Println(inputid.ID)
 //positon detail add type company done
 //status candidate 
-//company list position done -formatter belum
+//company list position done -formatter 
+//fixing location
 //TODO 
 	if IsUserGetCompany.UserID != input.User.ID {
 		return IsUserGetCompany, errors.New("Forbidden Access")

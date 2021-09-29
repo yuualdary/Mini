@@ -6,6 +6,7 @@ import (
 	"pasarwarga/Position"
 	"pasarwarga/category"
 	"pasarwarga/helper"
+	"pasarwarga/location"
 	"pasarwarga/models"
 
 	"github.com/gin-gonic/gin"
@@ -14,11 +15,12 @@ import (
 type PositionHandler struct {
 	PositionService Position.Service
 	CategoryService category.Service
+	LocationService location.Service
 
 }
 
-func NewPositionHandler(PositionService Position.Service,CategoryService category.Service) *PositionHandler {
-	return &PositionHandler{PositionService,CategoryService}
+func NewPositionHandler(PositionService Position.Service,CategoryService category.Service,	LocationService location.Service) *PositionHandler {
+	return &PositionHandler{PositionService,CategoryService,LocationService}
 }
 
 func (h *PositionHandler) CreatePosition(c *gin.Context) {
@@ -216,7 +218,22 @@ func (h *PositionHandler) ListCompanyPosition(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompany(FindPositionInCompany))
+
+	GetLocations, err := h.LocationService.LocationList()
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompany(FindPositionInCompany,GetLocations))
 	c.JSON(http.StatusOK, response)
 
 }
@@ -267,6 +284,8 @@ func (h *PositionHandler) DetailPosition(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+
 	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success",Position.FormatDetailPosition(FindPosition,GetCategory))
 	c.JSON(http.StatusOK, response)
 
