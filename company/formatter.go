@@ -8,6 +8,7 @@ type CompanyFormatter struct {
 	ID                 string `json:"id"`
 	CompanyName        string `json:"companyname"`
 	CompanyDescription string `json:"companydescription"`
+	LocationData LocationDetail
 	Type CompanyType
 	// User               CompanyOwner `json:"user"`
 }
@@ -18,7 +19,10 @@ type PositionFormatter struct {
 	PositionName        string      `json:"positionname"`
 	//Count int `json:"candidate"`
 }
-
+type LocationDetail struct {
+	ID string `json:"id"`
+	DetailLocation string `json:"locationdetail"`
+}
 
 type CompanyType struct {
 	ID string `json:"id"`

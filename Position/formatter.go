@@ -11,6 +11,7 @@ type CompanyFormatter struct {
 	CompanyName        string `json:"companyname"`
 	CompanyDescription string `json:"companydescription"`
 	SubPosition []SubPositionFormatter `json:"companyposition"`
+	Location LocationDetail `json:"location"`
 
 	// User               CompanyOwner `json:"user"`
 
@@ -43,7 +44,10 @@ type DetailPositionFormatter struct{
 }
 //buat gaji,buat validasi input, formatter lain, tambahin RP di gaji
 
-
+type LocationDetail struct {
+	ID string `json:"id"`
+	DetailLocation string `json:"locationdetail"`
+}
 type PositionTag struct{
 	ID          string `json:"id"`
 	PositionTag string `json:"tag"`
@@ -66,7 +70,7 @@ type CandidateCount struct{
 }
 
 
-func FormatCompany(position []models.Position) CompanyFormatter {
+func FormatCompany(position []models.Position, location []models.Locations) CompanyFormatter {
 
 	CompanyFormatter := CompanyFormatter{}
 
@@ -76,9 +80,19 @@ func FormatCompany(position []models.Position) CompanyFormatter {
 		CompanyFormatter.ID = position[0].Companies.ID
 		CompanyFormatter.CompanyName =   position[0].Companies.CompanyName
 		CompanyFormatter.CompanyDescription = position[0].Companies.CompanyDescription
+		CompanyFormatter.Location.ID = position[0].Companies.LocationID
 
 
 	}
+
+	for _, locationlist := range location{
+
+		if locationlist.ID == CompanyFormatter.Location.ID{
+			CompanyFormatter.Location.DetailLocation = locationlist.LocationCity
+
+		}
+	} 
+
 
 	PositionCompany := []SubPositionFormatter{}
 
@@ -106,7 +120,7 @@ func FormatDetailPosition(position models.Position, category []models.Category) 
 	DetailPositionFormatter.PositionDescription = position.PositionDescription
 	DetailPositionFormatter.PositionFee = position.PositionFee
 	DetailPositionFormatter.PositionLength = position.PositionLength
-
+	
 	company := position.Companies
 
 	companyname := CompanyName{}

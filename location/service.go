@@ -8,6 +8,7 @@ import (
 type Service interface {
 	CreateLocation(input CreateLocationInput) (models.Locations, error)
 	UpdateLocation(input DetailLocationInput, inputdata CreateLocationInput) (models.Locations, error)
+	DetailLocation(ID string)(models.Locations,error)
 	LocationList() ([]models.Locations, error)
 }
 
@@ -34,6 +35,20 @@ func (s *service) CreateLocation(input CreateLocationInput) (models.Locations, e
 	return SaveLocation, nil
 
 }
+
+
+func (s *service)DetailLocation(ID string)(models.Locations,error){
+
+	DetailLocation, err := s.repository.FindLocation(ID)
+
+	if err != nil {
+
+		return DetailLocation,err
+	}
+
+	return DetailLocation, nil
+}
+
 
 func (s *service) UpdateLocation(input DetailLocationInput, inputdata CreateLocationInput) (models.Locations, error) {
 
