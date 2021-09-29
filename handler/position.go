@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"pasarwarga/Company"
 	"pasarwarga/Position"
 	"pasarwarga/category"
 	"pasarwarga/helper"
@@ -179,6 +180,47 @@ func (h *PositionHandler) ListPosition(c *gin.Context) {
 }
 
 //buat detail
+
+
+
+
+func (h *PositionHandler) ListCompanyPosition(c *gin.Context) {
+
+	var input Company.CompanyFindIDInput
+
+	err := c.ShouldBindUri(&input)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	FindPositionInCompany, err := h.PositionService.ListCompanyPosition(input.ID)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+
+		ErrorMessage := gin.H{
+			"error": errors,
+		}
+
+		response := helper.APIResponse("Fail Get Data From Position Input", http.StatusBadRequest, "error", ErrorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompany(FindPositionInCompany))
+	c.JSON(http.StatusOK, response)
+
+}
+
 
 func (h *PositionHandler) DetailPosition(c *gin.Context) {
 
