@@ -10,6 +10,7 @@ type Repository interface {
 	CreateCandidate(candidate models.Candidate) (models.Candidate, error)
 	UpdateCandidate(candidate models.Candidate) (models.Candidate, error)
 	DetailCandidatePosition(ID string) (models.Candidate, error)
+	DetailCandidate(ID string)(models.Candidate,error)
 	ListCandidate(positionid string) ([]models.Candidate, error)
 }
 
@@ -42,11 +43,25 @@ func (r *repository) UpdateCandidate(candidate models.Candidate) (models.Candida
 	return candidate, nil
 }
 
+
 func (r *repository) DetailCandidatePosition(ID string) (models.Candidate, error) {
 
 	var candidate models.Candidate
 
-	err := r.db.Where("position_id= ? ", ID).Find(&candidate).Error
+	err := r.db.Preload("Candidates").Preload("Users").Where("position_id = ? ", ID).Find(&candidate).Error
+
+	if err != nil {
+		return candidate, err
+	}
+
+	return candidate, nil
+
+}
+func (r *repository)DetailCandidate(ID string)(models.Candidate,error){
+
+	var candidate models.Candidate
+
+	err := r.db.Preload("Candidates").Preload("Users").Where("id = ? ", ID).Find(&candidate).Error
 
 	if err != nil {
 		return candidate, err

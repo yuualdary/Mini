@@ -15,6 +15,7 @@ type Service interface {
 	ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error)
 	UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error)
 	CheckOwnerValidation(input DetailCandidateInput) (bool, error)
+	DetailCandidate(inputid DetailCandidateInput) (models.Candidate,error)
 }
 
 type service struct {
@@ -66,11 +67,32 @@ func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate,
 
 func (s *service) UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error) {
 
-	CreateCandidate := models.Candidate{}
-	CreateCandidate.CategoryID = input.CategoryID
-	// CreateCandidate.UpdatedByID =
+	
+	FindCandidate, err := s.repository.DetailCandidate(inputid.ID)
+	
+	if err != nil {
+
+		return models.Candidate{},err
+	} 
+
+	
+	CheckOwner,err := s.CheckOwnerValidation(FindCandidate.PositionID, inputid.ID)
+
+	if err != nil {
+
+		return models.Candidate{},err
+	}
+
+	if !CheckOwner{
+
+		return models.Candidate{},errors.New("Forbidden Access")
+	}
+
+	
+	FindCandidate.CategoryID = input.CategoryID
+	FindCandidate.UpdatedByID = input.User.ID
 	//buat pdfnya
-	SaveCandidate, err := s.repository.CreateCandidate(CreateCandidate)
+	SaveCandidate, err := s.repository.UpdateCandidate(FindCandidate)
 
 	if err != nil {
 		return SaveCandidate, err
@@ -79,16 +101,48 @@ func (s *service) UpdateCandidateStatus(inputid DetailCandidateInput, input Crea
 	return SaveCandidate, nil
 }
 
+func (s *service)DetailCandidate(inputid DetailCandidateInput) (models.Candidate,error){
+
+
+
+	FindCandidate, err := s.repository.DetailCandidate(inputid.ID)
+	
+	if err != nil {
+
+		return models.Candidate{},err
+	}
+
+	CheckOwner, err := s.CheckOwnerValidation(FindCandidate.Positions.ID,inputid.Company.ID)
+
+	if err != nil {
+		return models.Candidate{}, err
+	}
+
+	if !CheckOwner {
+		return models.Candidate{}, errors.New("Forbidden Access")
+	}
+
+
+	return FindCandidate,nil
+}
+
+
 func (s *service) ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error) {
 	//harusnya pakai middleware, buat misahin manya yg owner
+	FindCandidate, err := s.repository.DetailCandidate(inputid.ID)
+	
+	if err != nil {
 
-	CheckOwner, err := s.CheckOwnerValidation(inputid)
+		return []models.Candidate{},err
+	} 
+
+	CheckOwner, err := s.CheckOwnerValidation(FindCandidate.PositionID,inputid.Company.ID)
 
 	if err != nil {
 		return []models.Candidate{}, err
 	}
 
-	if CheckOwner != true {
+	if !CheckOwner {
 		return []models.Candidate{}, errors.New("Forbidden Access")
 	}
 
@@ -103,16 +157,16 @@ func (s *service) ListCandidate(inputid DetailCandidateInput) ([]models.Candidat
 
 }
 
-func (s *service) CheckOwnerValidation(input DetailCandidateInput) (bool, error) {
+func (s *service) CheckOwnerValidation(ID string, CompanyID string) (bool, error) {
 	//2 //3
-	CheckPosition, err := s.PositionRepository.DetailPosition(input.ID)
+	CheckPosition, err := s.PositionRepository.DetailPosition(ID)
 	//get companyid positionid
 
 	if err != nil {
 		return false, err
 	}
 	//2 //4
-	if CheckPosition.CompanyID != input.Company.ID {
+	if CheckPosition.CompanyID != CompanyID {
 		return false, err
 	}
 
