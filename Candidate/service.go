@@ -14,7 +14,7 @@ type Service interface {
 	CreateCandidate(input CreateCandidateInput) (models.Candidate, error)
 	ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error)
 	UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error)
-	CheckOwnerValidation(input DetailCandidateInput) (bool, error)
+	CheckOwnerValidation(ID string, CompanyID string) (bool, error)
 	DetailCandidate(inputid DetailCandidateInput) (models.Candidate,error)
 }
 

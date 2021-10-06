@@ -3,6 +3,7 @@ package main
 import (
 	"pasarwarga/Candidate"
 	"pasarwarga/Company"
+	"pasarwarga/File"
 	"pasarwarga/Otp"
 	"pasarwarga/Position"
 	"pasarwarga/Users"
@@ -32,13 +33,16 @@ func main() {
 	LocationRepository := location.NewRepository(config.DB)
 	PositionRepository := Position.NewRepository(config.DB)
 	CandidateRepository := Candidate.NewRepository(config.DB)
+	FilePdfRepository := File.NewRepository(config.DB)
 
 	CategoryService := category.NewService(CategoryRepository, ArticleRepository)
 	ArticleService := article.NewService(ArticleRepository)
 	UsersService := Users.NewService(UserRepository)
 	OtpService := Otp.NewService(OtpRepository, UserRepository)
 	CompanyService := Company.NewService(CompanyRepository, UserRepository)
+	FilePdfService := File.NewService(FilePdfRepository,UserRepository )
 	LocationService := location.NewService(LocationRepository)
+
 	PositionService := Position.NewService(PositionRepository, CompanyRepository)
 	CandidateService := Candidate.NewService(CandidateRepository, UserRepository, PositionRepository, CompanyRepository)
 	AuthService := auth.NewService()
@@ -53,6 +57,8 @@ func main() {
 	LocationHandler := handler.NewLocationHandler(LocationService)
 	PositionHandler := handler.NewPositionHandler(PositionService,CategoryService,LocationService)
 	CandidateHandler := handler.NewCandidateHandler(CandidateService)
+	FilePdfHandler := handler.NewFilePdfHandler(FilePdfService)
+
 
 	router.Static("/images", "./images")
 
@@ -88,6 +94,10 @@ func main() {
 		v1.GET("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.ListCandidateToPosition)
 		v1.POST("/candidate/", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.CreateCandidate)
 		v1.PUT("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.UpdateCandidate)
+		v1.POST("/filepdf", middleware.AuthMiddleware(AuthService, UsersService), FilePdfHandler.CreateFilePDF)
+		v1.GET("/filepdf/:id", middleware.AuthMiddleware(AuthService, UsersService), FilePdfHandler.DetailFile)
+
+
 
 	}
 

@@ -1,5 +1,11 @@
 package File
 
-type CreateFile struct {
-	UserID string `json:"id" binding:"required"`
+import "pasarwarga/models"
+
+
+
+type DetailFile struct {
+	PdfFile string `uri:"id" binding:"required"`
+	User    models.Users
 }
+
