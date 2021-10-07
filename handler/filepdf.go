@@ -33,8 +33,9 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	file.Filename = userID+".pdf"//change name
 
-	path := fmt.Sprintf("userpdf/ %s", userID)
+	path := fmt.Sprintf("userpdf/%s", file.Filename)
 
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
@@ -86,7 +87,11 @@ func (h *FilePdfHandler) UpdateFile(c *gin.Context){
 		return
 	}
 
-	path := fmt.Sprintf("userpdf/ %s", userID)
+	file.Filename = userID+".pdf"//change name
+	//todo
+	//kalau bisa pikirin kalau ditengah" gagal
+
+	path := fmt.Sprintf("userpdf/%s", file.Filename)
 
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {

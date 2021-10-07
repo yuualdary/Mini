@@ -7,6 +7,7 @@ type Filepdf struct {
 	Filename string
 	UserID   string `gorm:"type:varchar(191)"`
 	User    Users  `gorm:"foreignKey:UserID"`
+	IsPrimary bool
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 

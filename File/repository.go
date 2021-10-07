@@ -11,6 +11,7 @@ type Repository interface {
 	CreateFile(file models.Filepdf) (models.Filepdf,error)
 	UpdateFile(file models.Filepdf) (models.Filepdf,error)
 	FindFile(ID string) (models.Filepdf,error)
+	ListAllFile(ID string)([]models.Filepdf,error)
 
 }
 
@@ -61,3 +62,18 @@ func (r *repository)FindFile(ID string) (models.Filepdf,error){
 	return file,nil
 }
 
+func (r *repository)ListAllFile(ID string)([]models.Filepdf,error){
+
+	var listfile []models.Filepdf
+
+	err := r.db.Where("user_id = ?", ID).Find(&listfile).Error
+
+	if err != nil {
+
+		return listfile,err
+	}
+
+	return listfile, nil 
+
+
+}
