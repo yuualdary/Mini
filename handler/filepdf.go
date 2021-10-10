@@ -26,6 +26,15 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 	userID := currentUser.ID
 	
 	file, err := c.FormFile("file")
+
+	if file.Size > 1000000{
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("File Cannot More Than 1 MB", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
@@ -60,11 +69,11 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 
 
 
-func (h *FilePdfHandler) UpdateFile(c *gin.Context){
+func (h *FilePdfHandler) UpdatePrimary(c *gin.Context){
 
 	var inputid File.DetailFile
 
-	err := c.ShouldBindUri(&inputid)
+	err := c.ShouldBindJSON(&inputid)
 
 	if err != nil {
 		ErrorMessage := gin.H{

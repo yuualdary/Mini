@@ -86,24 +86,26 @@ func (s *service)UpdateFile(inputid DetailFile, file string) (models.Filepdf,err
 		return models.Filepdf{},errors.New("Forbidden Access")
 		//TODO
 		//isprimary done
-		//check pdf dan ukuran file kalau bisa
+		//check pdf dan ukuran file kalau bisa done
 		//list dan validasi max 3x file
 		//update file set primary, delete file 
 		//buat validasi kalau yg access dari company tidak forbidden!
 		//buat hanya bisa 1 x cv atau bisa banyak upload tapi di set jadi primary (?) done
+		//buat file many to many sama candidate agar pas dihapus engga error
 	}
-
-	FindFileID.Filename =FindFileID.ID+".pdf"
-	FindFileID.UserID = FindUserFromID.ID
 	
-	UpdateFile, err := s.repository.UpdateFile(FindFileID)
+	FindFileID.IsPrimary = true
+
+	_, err = s.UpdatePrimary(FindFileID.ID,FindFileID.ID)
 
 	if err != nil {
 
-		return UpdateFile,err
+		return FindFileID,err
 	}
+	
+	
 
-	return UpdateFile,nil
+	return FindFileID,nil
 
 }
 

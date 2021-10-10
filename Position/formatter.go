@@ -2,6 +2,7 @@ package Position
 
 import (
 	"pasarwarga/models"
+	"time"
 )
 
 
@@ -111,6 +112,38 @@ func FormatCompany(position []models.Position, location []models.Locations) Comp
 
 	return CompanyFormatter
 }
+
+func FormatCompanyListGtine(position []models.Position, location []models.Locations) CompanyFormatter {
+
+	x :=CompanyFormatter{}
+
+	go func ()  {
+			x = FormatCompany(position,location)
+		//	fmt.Println(x)
+
+	}()
+	time.Sleep(1 *time.Second)
+	//fmt.Println(x)
+
+	return x
+	
+}
+
+func FormatCompanyRoutine(position models.Position, category []models.Category) DetailPositionFormatter{
+
+	 x :=DetailPositionFormatter{}
+
+	go func ()  {
+			x = FormatDetailPosition(position,category)
+		//	fmt.Println(x)
+
+	}()
+	time.Sleep(1 *time.Second)
+	//fmt.Println(x)
+
+	return x
+
+} 
 
 func FormatDetailPosition(position models.Position, category []models.Category) DetailPositionFormatter {
 
