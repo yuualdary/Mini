@@ -233,7 +233,8 @@ func (h *PositionHandler) ListCompanyPosition(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompany(FindPositionInCompany,GetLocations))
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompanyListGtine(FindPositionInCompany,GetLocations))
+	//better taruh di service/repo?
 	c.JSON(http.StatusOK, response)
 
 }
@@ -286,7 +287,9 @@ func (h *PositionHandler) DetailPosition(c *gin.Context) {
 	}
 
 
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success",Position.FormatDetailPosition(FindPosition,GetCategory))
+	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success",Position.FormatCompanyRoutine(FindPosition,GetCategory))
+	//go routine ada tinggal
+	//cocok digunakan untuk DB (?)
 	c.JSON(http.StatusOK, response)
 
 }
