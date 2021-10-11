@@ -56,7 +56,7 @@ func main() {
 	OtpHandler := handler.NewOtpHandler(OtpService)
 	LocationHandler := handler.NewLocationHandler(LocationService)
 	PositionHandler := handler.NewPositionHandler(PositionService,CategoryService,LocationService)
-	CandidateHandler := handler.NewCandidateHandler(CandidateService)
+	CandidateHandler := handler.NewCandidateHandler(CandidateService,CompanyService)
 	FilePdfHandler := handler.NewFilePdfHandler(FilePdfService)
 
 
@@ -93,6 +93,7 @@ func main() {
 		v1.POST("/positioncategory/:id", middleware.AuthMiddleware(AuthService, UsersService),PositionHandler.CreatePositionTag)
 		v1.GET("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.ListCandidateToPosition)
 		v1.POST("/candidate/", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.CreateCandidate)
+		v1.GET("/users/application", middleware.AuthMiddleware(AuthService, UsersService), CandidateHandler.ListUserApplication)
 		v1.PUT("/candidate/:id", middleware.AuthCompanyMiddleware(AuthService, UsersService, CompanyService), CandidateHandler.UpdateCandidate)
 		v1.POST("/filepdf", middleware.AuthMiddleware(AuthService, UsersService), FilePdfHandler.CreateFilePDF)
 		v1.GET("/filepdf/:id", middleware.AuthMiddleware(AuthService, UsersService), FilePdfHandler.DetailFile)
