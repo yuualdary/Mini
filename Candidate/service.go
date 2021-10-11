@@ -16,6 +16,8 @@ type Service interface {
 	UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error)
 	CheckOwnerValidation(ID string, CompanyID string) (bool, error)
 	DetailCandidate(inputid DetailCandidateInput) (models.Candidate,error)
+	ListUserApplication(UserID string, value string)([]models.Candidate,error)
+
 }
 
 type service struct {
@@ -173,3 +175,15 @@ func (s *service) CheckOwnerValidation(ID string, CompanyID string) (bool, error
 	return true, nil
 
 }
+
+func (s *service)ListUserApplication(UserID string, value string)([]models.Candidate,error){
+
+	MyList, err := s.repository.ListUserApplication(UserID,value)
+
+	if err != nil {
+		return MyList,err
+	}
+
+	return MyList,nil
+}
+

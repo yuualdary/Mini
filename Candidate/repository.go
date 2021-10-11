@@ -12,6 +12,8 @@ type Repository interface {
 	DetailCandidatePosition(ID string) (models.Candidate, error)
 	DetailCandidate(ID string)(models.Candidate,error)
 	ListCandidate(positionid string) ([]models.Candidate, error)
+	ListUserApplication(UserID string,value string)([]models.Candidate,error)
+	
 }
 
 type repository struct {
@@ -48,7 +50,7 @@ func (r *repository) DetailCandidatePosition(ID string) (models.Candidate, error
 
 	var candidate models.Candidate
 
-	err := r.db.Preload("Candidates").Preload("Users").Where("position_id = ? ", ID).Find(&candidate).Error
+	err := r.db.Preload("Users").Where("position_id = ? ", ID).Find(&candidate).Error
 
 	if err != nil {
 		return candidate, err
@@ -81,4 +83,19 @@ func (r *repository) ListCandidate(positioid string) ([]models.Candidate, error)
 		return []models.Candidate{}, err
 	}
 	return candidate, nil
+}
+
+
+func (r *repository)ListUserApplication(UserID string,value string)([]models.Candidate,error){
+
+	var candidate []models.Candidate
+
+	err := r.db.Joins("Categories").Preload("Positions").Where("user_id = ? ", UserID).Where("categories.category_prefix = ?","CANDIDATESTATUS").Where("categories.category_name LIKE ?", "%"+value+"%").Find(&candidate).Error
+
+	if err != nil {
+		return candidate,err
+	}
+
+	return candidate, nil
+
 }

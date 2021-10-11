@@ -11,6 +11,15 @@ type DetailCandidateFormatter struct {
 }
 
 
+type DetailUserApplicationFormatter struct{
+	ID string  `json:"id"`
+	CandidateStatus string `json:"status"`
+	Position     PositionDetailFormatter `json:"position"`
+	CompanyName string `json:"companyname"`
+
+
+}
+
 type UserCandidate struct {
 	ID           string `json:"id"`
 	UserName string `json:"username"`
@@ -45,4 +54,50 @@ func FormatCandidateDetail(candidate models.Candidate) DetailCandidateFormatter 
 
 	return CandidateFormatter
 	
+}
+
+func FormatDetailApplication(candidate models.Candidate, company []models.Company) DetailUserApplicationFormatter {
+
+	ListApplicationFormatter := DetailUserApplicationFormatter{}
+
+	ListApplicationFormatter.ID = candidate.ID
+	ListApplicationFormatter.CandidateStatus = candidate.Categories.CategoryName
+
+	GetPosition := PositionDetailFormatter{}
+
+	GetPosition.ID = candidate.Positions.ID
+	GetPosition.PositionName = candidate.Positions.PositionName
+
+	ListApplicationFormatter.Position = GetPosition
+
+
+	for _, findcompany := range company{
+
+		if findcompany.ID == candidate.Positions.CompanyID{
+
+			ListApplicationFormatter.CompanyName = findcompany.CompanyName
+		}
+	}
+
+
+	return ListApplicationFormatter
+
+
+}
+
+func FormatListApplication(candidate []models.Candidate, company []models.Company) []DetailUserApplicationFormatter{
+
+	ListApplicationFormatter := []DetailUserApplicationFormatter{}
+
+		for _, listcandidate := range candidate{
+
+			DetailApplicationFormatter := FormatDetailApplication(listcandidate,company)//get each position
+			ListApplicationFormatter = append(ListApplicationFormatter, DetailApplicationFormatter)
+
+
+		}
+	
+
+	return ListApplicationFormatter
+
 }
