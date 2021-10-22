@@ -34,10 +34,12 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	
+	
 
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
-		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		response := helper.APIResponse("Failed to upload file image", http.StatusBadRequest, "error", data)
 
 		c.JSON(http.StatusBadRequest, response)
 		return
@@ -55,7 +57,7 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 		return
 	}
 
-	NewFile, err := h.PdfService.CreateService(userID,path)
+	_, err = h.PdfService.CreateService(userID,path)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
@@ -63,7 +65,7 @@ func (h *FilePdfHandler) CreateFilePDF(c *gin.Context){
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.APIResponse("Detail Category Data", http.StatusOK, "success", NewFile)
+	response := helper.APIResponse("Detail Category Data", http.StatusOK, "success", "Added New File")
 	c.JSON(http.StatusOK, response)
 }
 

@@ -14,6 +14,8 @@ type Repository interface {
 	ListCompanyPosition(CompanyID string)([]models.Position,error)
 	ListPositionTag(ID string)([]models.PositionCategory,error)
 	DetailPosition(ID string) (models.Position, error)
+	BookMarkPosition(bookmark models.Bookmarks) (models.Bookmarks,error)
+	RemoveBookmark(BookmarkID string) error
 	DeletePosition(ID string) error
 }
 
@@ -123,4 +125,31 @@ func(r *repository)	ListCompanyPosition(CompanyID string)([]models.Position,erro
 	return position,nil
 
 }
+
+
+func (r *repository)BookMarkPosition(bookmark models.Bookmarks) (models.Bookmarks,error){
+
+	err := r.db.Create(&bookmark).Error
+
+	if err != nil {
+		return models.Bookmarks{},err
+	}
+
+	return bookmark, nil
+}
+
+func (r *repository)RemoveBookmark(BookmarkID string) error {
+
+	var bookmark models.Bookmarks
+
+	err := r.db.Where("PositionID = ? ", BookmarkID).Delete(&bookmark).Error
+
+	if err != nil {
+
+		return err
+	}
+	return nil
+}
+
+
 

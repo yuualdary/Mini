@@ -14,6 +14,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/tools/gopls v0.7.1 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.12
 )

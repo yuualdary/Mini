@@ -10,8 +10,10 @@ type Repository interface {
 	SaveUser(user models.Users) (models.Users, error)
 	FindUserEmail(email string) (models.Users, error)
 	FindUserById(ID string) (models.Users, error)
+	FindUserUnverifiedById(ID string) (models.Users, error)
 	UpdateUser(users models.Users) (models.Users, error)
 	SaveOTP(otp models.Otps) (models.Otps, error)
+	GetListUnregistered(email string)([]models.Users,error)
 }
 
 type repository struct {
@@ -52,7 +54,7 @@ func (r *repository) FindUserById(ID string) (models.Users, error) {
 
 	var User models.Users
 
-	err := r.db.Where("id = ?", ID).Find(&User).Error
+	err := r.db.Where("id = ? AND is_verif = ? ", ID,true).Find(&User).Error
 
 	if err != nil {
 		return User, err
@@ -84,3 +86,31 @@ func (r *repository) SaveOTP(otp models.Otps) (models.Otps, error) {
 
 	return otp, nil
 }
+
+func (r *repository)GetListUnregistered(email string)([]models.Users,error) {
+	
+	var user []models.Users
+	
+	err := r.db.Debug().Where("email = ? AND is_verif = ? ", email, false).Find(&user).Error
+	
+	if err != nil {
+		return []models.Users{}, err
+	}
+	
+	return user, nil
+}
+
+func (r *repository)FindUserUnverifiedById(ID string) (models.Users, error){
+
+	var user models.Users
+
+	err := r.db.Debug().Where("id = ? AND is_verif = ? ", ID, false).Find(&user).Error
+
+	if err !=nil{
+		return models.Users{}, err
+	}
+
+	return user, nil
+
+}
+

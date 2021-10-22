@@ -160,7 +160,8 @@ func (h *CandidateHandler) ListUserApplication(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
+//todo
+//coba dibuat goroutinenya
 
 	GetCompany, err := h.CompanyService.ListCompany("")
 

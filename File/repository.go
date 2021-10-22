@@ -12,6 +12,7 @@ type Repository interface {
 	UpdateFile(file models.Filepdf) (models.Filepdf,error)
 	FindFile(ID string) (models.Filepdf,error)
 	ListAllFile(ID string)([]models.Filepdf,error)
+	
 
 }
 

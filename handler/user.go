@@ -70,7 +70,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	response := helper.APIResponse("Account Has Been Registered", http.StatusOK, "success", NewUser)
+	response := helper.APIResponse("Account Has Been Registered, You Can Check Your Email For Verification", http.StatusOK, "success", NewUser)
 	c.JSON(http.StatusOK, response)
 }
 
