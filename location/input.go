@@ -7,3 +7,4 @@ type CreateLocationInput struct {
 type DetailLocationInput struct {
 	ID string `uri:"id" binding:"required"`
 }
+

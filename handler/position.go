@@ -219,21 +219,23 @@ func (h *PositionHandler) ListCompanyPosition(c *gin.Context) {
 	}
 
 
-	GetLocations, err := h.LocationService.LocationList()
+	// GetLocations, err := h.LocationService.LocationList()
 
-	if err != nil {
-		errors := helper.FormatValidationError(err)
+	// if err != nil {
+	// 	errors := helper.FormatValidationError(err)
 
-		ErrorMessage := gin.H{
-			"error": errors,
-		}
+	// 	ErrorMessage := gin.H{
+	// 		"error": errors,
+	// 	}
 
-		response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	// 	response := helper.APIResponse("Fail Get Data From Location Input", http.StatusBadRequest, "error", ErrorMessage)
+	// 	c.JSON(http.StatusBadRequest, response)
+	// 	return
+	// }
 
-	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompanyListGtine(FindPositionInCompany,GetLocations))
+	// response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Position.FormatCompanyListGtine(FindPositionInCompany,GetLocations))
+	 response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", FindPositionInCompany)
+
 	//better taruh di service/repo?
 	c.JSON(http.StatusOK, response)
 

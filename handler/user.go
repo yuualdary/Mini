@@ -29,16 +29,6 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var input Users.RegisterInput
 
 	err := c.ShouldBindJSON(&input)
-	//form validation
-
-	// DateValidator:=helper.DateValidator(input.BOD)
-
-	// if DateValidator != ""{
-
-	// 	response := helper.APIResponse("Fail Register Data", http.StatusBadRequest,"errors",DateValidator)
-	// 	c.JSON(http.StatusUnprocessableEntity,response)
-	// 	return
-	// }
 
 	if err != nil {
 
@@ -55,6 +45,22 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	}
 
 	//
+
+	validate := input.RegisterValiator()
+	
+	if validate != "" {
+
+		errors := validate
+		ErrorMessage := gin.H{
+			"errors": errors,
+		}
+		response := helper.APIResponse("Fail Register Data", http.StatusBadRequest, "errors", ErrorMessage)
+		// fmt.Println(response)
+
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+	
 
 	NewUser, err := h.UserService.RegisterUser(input)
 
