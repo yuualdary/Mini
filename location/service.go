@@ -9,7 +9,7 @@ type Service interface {
 	CreateLocation(input CreateLocationInput) (models.Locations, error)
 	UpdateLocation(input DetailLocationInput, inputdata CreateLocationInput) (models.Locations, error)
 	DetailLocation(ID string)(models.Locations,error)
-	LocationList() ([]models.Locations, error)
+	// LocationList() ([]byte, error)
 }
 
 type service struct {
@@ -65,13 +65,33 @@ func (s *service) UpdateLocation(input DetailLocationInput, inputdata CreateLoca
 	return UpdateLocation, nil
 
 }
-func (s *service) LocationList() ([]models.Locations, error) {
+// func (s *service) LocationList() ([]byte, error) {
 
-	List, err := s.repository.ListLocation()
-	if err != nil {
-		return List, err
-	}
+// 	// api/daerahindonesia/provinsi"
 
-	return List, nil
+// 	// List, err := s.repository.ListLocation()
+// 	// if err != nil {
+// 	// 	return List, err
+// 	// }
 
-}
+// 	// return List, nil
+
+// 	GetLocation, err := fetch.GetLokasi("api/daerahindonesia/provinsi")
+
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	var lokasi apiformat.DataLokasi
+
+// 	err = json.Unmarshal(GetLocation, &lokasi)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if !lokasi.Status {
+// 		return nil, errors.New("Location not found")
+// 	}
+
+// 	return lokasi.Data , err
+
+// }

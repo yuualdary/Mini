@@ -3,6 +3,7 @@ package Users
 import (
 	"errors"
 	"math/rand"
+	"pasarwarga/Email"
 	"pasarwarga/generatornumber"
 	"pasarwarga/models"
 	"strconv"
@@ -17,7 +18,9 @@ type Service interface {
 	SaveAvatar(ID string, filelocatiion string) (models.Users, error)
 	LoginUser(input LoginInput) (models.Users, error)
 	GetUserById(ID string) (models.Users, error)
+	GetUserUnregisteredById(ID string) (models.Users, error)
 	CreateOtp(UserID string) (models.Otps, error)
+
 }
 
 type service struct {
@@ -63,6 +66,17 @@ func (s *service) RegisterUser(input RegisterInput) (models.Users, error) {
 
 		return CheckMail, errors.New("Email Already Used")
 	}
+	CheckIfUserAlreadyRegisterd, err := s.repository.GetListUnregistered(User.Email)
+
+	if err != nil {
+		return models.Users{}, err
+
+	}
+
+	if len(CheckIfUserAlreadyRegisterd) > 1{
+		return models.Users{}, errors.New("Your account already registered please make sure you have verif your account")
+
+	}
 
 	NewUser, err := s.repository.SaveUser(User)
 
@@ -71,10 +85,16 @@ func (s *service) RegisterUser(input RegisterInput) (models.Users, error) {
 		return NewUser, err
 	}
 
-	_, err = s.CreateOtp(NewUser.ID)
+	CreateOtp, err := s.CreateOtp(NewUser.ID)
 
 	if err != nil {
 		return NewUser, err
+	}
+
+	SendMail := Email.SendEmail(NewUser.Name,CreateOtp.Value ,CreateOtp.Expired ,NewUser.Email)
+
+	if !SendMail{
+		return NewUser, errors.New("Failed send email, please make sure your email valid or request verification")
 	}
 
 	return NewUser, nil
@@ -97,7 +117,7 @@ func (s *service) LoginUser(input LoginInput) (models.Users, error) {
 
 	if GetDataUser.ID == "" {
 
-		return GetDataUser, errors.New("Email Not Found")
+		return GetDataUser, errors.New("email not found")
 	}
 
 	//hash password
@@ -106,7 +126,7 @@ func (s *service) LoginUser(input LoginInput) (models.Users, error) {
 
 	if err != nil {
 
-		return GetDataUser, err
+		return GetDataUser, errors.New("wrong password")
 
 	}
 
@@ -154,7 +174,7 @@ func (s *service) CreateOtp(UserID string) (models.Otps, error) {
 	Otp.ID = generatornumber.NewUUID()
 	Otp.UsersID = UserID
 	Otp.Value = rand.Intn(10000)
-	Otp.Expired = time.Now().Local().Add(time.Minute * 5)
+	Otp.Expired = time.Now().Local().Add(time.Minute * 30)
 	Save, err := s.repository.SaveOTP(Otp)
 
 	if err != nil {
@@ -162,6 +182,20 @@ func (s *service) CreateOtp(UserID string) (models.Otps, error) {
 	}
 	return Save, nil
 }
+
+func (s *service)GetUserUnregisteredById(ID string) (models.Users, error) {
+
+	GetUnregisteredUser, err := s.repository.FindUserUnverifiedById(ID)
+
+	if err != nil {
+
+		return models.Users{},err
+	}
+
+	return GetUnregisteredUser, nil
+
+}
+
 
 // func (s *service) CheckOTP(input OtpInput) (models.Otps, error) {
 

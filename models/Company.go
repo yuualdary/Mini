@@ -12,8 +12,10 @@ type Company struct {
 	CompanyDescription string
 	UserID             string    `gorm:"type:varchar(191)"`
 	Users              Users     `gorm:"foreignKey:UserID"`
-	LocationID         string    `gorm:"type:varchar(191)"`
-	Location           Locations `gorm:"foreignKey:LocationID"`
+	// LocationID         string    `gorm:"type:varchar(191)"`
+	// Location           Locations `gorm:"foreignKey:LocationID"`
+	LocationID int
+	LocationProvince int
 	CategoryID         string    `gorm:"type:varchar(191)"`
 	Categories           Category `gorm:"foreignKey:CategoryID"`
 	CompanySlug string	

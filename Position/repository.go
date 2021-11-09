@@ -10,10 +10,12 @@ type Repository interface {
 	CreatePosiion(positiion models.Position) (models.Position, error)
 	UpdatePosition(position models.Position) (models.Position, error)
 	CreateTagPosition(positiontag models.PositionCategory)(models.PositionCategory, error)
-	ListPosition() ([]models.Position, error)
+	ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error)
 	ListCompanyPosition(CompanyID string)([]models.Position,error)
 	ListPositionTag(ID string)([]models.PositionCategory,error)
 	DetailPosition(ID string) (models.Position, error)
+	BookMarkPosition(bookmark models.Bookmarks) (models.Bookmarks,error)
+	RemoveBookmark(BookmarkID string) error
 	DeletePosition(ID string) error
 }
 
@@ -57,11 +59,14 @@ func (r *repository) UpdatePosition(positiion models.Position) (models.Position,
 	return positiion, nil
 }
 
-func (r *repository) ListPosition() ([]models.Position, error) {
+func (r *repository) ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error){
 
 	var position []models.Position
 
-	err := r.db.Preload("Companies").Preload("Candidates").Find(&position).Error
+
+	err := r.db.Debug().Joins("Companies").Preload("Candidates").Where("position_name LIKE ?", "%"+positionname+"%").Where("companies.location_id LIKE ?","%"+inputcity+"%").
+									Where("companies.location_province LIKE ?", "%"+inputprovince+"%").Where("category_id LIKE ?", "%"+inputjobtag+"%").
+									Find(&position).Error
 
 	if err != nil {
 		return []models.Position{}, err
@@ -123,4 +128,31 @@ func(r *repository)	ListCompanyPosition(CompanyID string)([]models.Position,erro
 	return position,nil
 
 }
+
+
+func (r *repository)BookMarkPosition(bookmark models.Bookmarks) (models.Bookmarks,error){
+
+	err := r.db.Create(&bookmark).Error
+
+	if err != nil {
+		return models.Bookmarks{},err
+	}
+
+	return bookmark, nil
+}
+
+func (r *repository)RemoveBookmark(BookmarkID string) error {
+
+	var bookmark models.Bookmarks
+
+	err := r.db.Where("PositionID = ? ", BookmarkID).Delete(&bookmark).Error
+
+	if err != nil {
+
+		return err
+	}
+	return nil
+}
+
+
 

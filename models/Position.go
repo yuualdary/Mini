@@ -15,3 +15,9 @@ type Position struct {
 	CompanyID      string  `gorm:"type:varchar(191)"`
 	Companies           Company `gorm:"foreignKey:CompanyID"`
 }
+
+
+type Bookmarks struct {
+	UserID     string `gorm:"primary_key"`
+	PositionID string `gorm:"primary_key"`
+}

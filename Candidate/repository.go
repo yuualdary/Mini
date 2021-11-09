@@ -14,6 +14,7 @@ type Repository interface {
 	ListCandidate(positionid string) ([]models.Candidate, error)
 	ListUserApplication(UserID string,value string)([]models.Candidate,error)
 	
+	
 }
 
 type repository struct {

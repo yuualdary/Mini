@@ -15,6 +15,7 @@ type Service interface {
 	DetailFile(inputid DetailFile) (models.Filepdf,error)
 	ListAll(ID string)([]models.Filepdf,error)
 	UpdatePrimary(NewID string, UserID string)([]models.Filepdf,error)
+	
 }
 
 
@@ -103,8 +104,6 @@ func (s *service)UpdateFile(inputid DetailFile, file string) (models.Filepdf,err
 		return FindFileID,err
 	}
 	
-	
-
 	return FindFileID,nil
 
 }
@@ -160,6 +159,11 @@ func(s *service)UpdatePrimary(NewID string, UserID string)([]models.Filepdf,erro
 		return GetList,err
 	}
 
+	if len(GetList) > 3 {
+
+		return []models.Filepdf{}, errors.New("Cannot Upload More Than 3 Files")
+	}
+
 	for _, ListFile := range GetList{
 
 		if ListFile.ID != NewID && ListFile.IsPrimary{
@@ -171,11 +175,7 @@ func(s *service)UpdatePrimary(NewID string, UserID string)([]models.Filepdf,erro
 
 				return []models.Filepdf{}, err
 			}
-
-
 		}
-
-
 	}
 
 	return GetList,nil

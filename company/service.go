@@ -14,7 +14,7 @@ type Service interface {
 	CreateCompany(input CreateCompanyInput) (models.Company, error)
 //	CreateCompanyLocation(input CreateCompanyLocInput)()
 	UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDInput) (models.Company, error)
-	ListCompany(value string) ([]models.Company, error)
+	ListCompany(value string, inputjobtag string, inputprovince string, inputcity string) ([]models.Company, error)
 	DetailCompany(input CompanyFindIDInput) (models.Company, error)
 	CompanyOwner(ID string) (models.Company, error)
 }
@@ -52,6 +52,7 @@ func (s *service) CreateCompany(input CreateCompanyInput) (models.Company, error
 	CreateCompany.CompanyDescription = input.CompanyDescription
 	CreateCompany.UserID = input.User.ID
 	CreateCompany.CategoryID = input.CompanyType
+	CreateCompany.LocationProvince = input.LocationProvince
 	CreateCompany.LocationID = input.LocationID
 
 	CreateCompany.CompanySlug = slug.Make(input.CompanyName)
@@ -96,6 +97,7 @@ func (s *service) UpdateCompany(input CreateCompanyInput, inputid CompanyFindIDI
 	UpdateCompany.CompanyDescription = input.CompanyDescription
 	UpdateCompany.CompanySlug = slug.Make(input.CompanyName)
 	UpdateCompany.CategoryID = input.CompanyType
+	UpdateCompany.LocationProvince = input.LocationProvince
 	UpdateCompany.LocationID = input.LocationID
 
 	Save, err := s.repository.UpdateCompany(UpdateCompany)
@@ -118,9 +120,9 @@ func (s *service) DetailCompany(inputid CompanyFindIDInput) (models.Company, err
 	return FindID, nil
 
 }
-func (s *service) ListCompany(value string) ([]models.Company, error) {
+func (s *service) 	ListCompany(value string, inputjobtag string, inputprovince string, inputcity string) ([]models.Company, error){
 
-	ListCompany, err := s.repository.ListCompany(value)
+	ListCompany, err := s.repository.ListCompany(value,inputjobtag,inputprovince,inputcity)
 
 	if err != nil {
 		return ListCompany, err

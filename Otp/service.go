@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"pasarwarga/Email"
 	"pasarwarga/Users"
 	"pasarwarga/models"
-	"strconv"
 	"time"
 )
 
@@ -27,22 +27,29 @@ func NewService(repository Repository, UserRepositroy Users.Repository) *service
 func (s *service) ResendOTP(ID string) (models.Otps, error) {
 
 	//CheckExpired, err := s.repository.GetUserOtp(ID)
+
+	FindUnregisteredUser, err := s.UserRepositroy.FindUserUnverifiedById(ID)
+
+	if err != nil{
+		return models.Otps{},err
+	}
+
 	GetCurrentDateTime := time.Now().Local()
-	GetOTPCurrentUser, err := s.repository.GetUserOtp(ID)
+	GetOTPCurrentUser, err := s.repository.GetUserOtp(FindUnregisteredUser.ID)
 	if err != nil {
 		return GetOTPCurrentUser, err
 	}
-	t := GetOTPCurrentUser.Expired.String()
+	t := GetOTPCurrentUser.Expired
 
 	// Prints output
-	out, err := fmt.Printf("%v\n", t)
+	out := fmt.Sprintf("current otp still valid, request again after %s",t)
 	fmt.Println(out)
-	if err != nil {
-		return GetOTPCurrentUser, err
-	}
+	// if err != nil {
+	// 	return GetOTPCurrentUser, err
+	// }
 	if GetCurrentDateTime.Before(GetOTPCurrentUser.Expired) {
 
-		return GetOTPCurrentUser, errors.New("current otp still valid, request again after" + strconv.Itoa(out))
+		return GetOTPCurrentUser, errors.New(out)
 
 	}
 
@@ -53,7 +60,7 @@ func (s *service) ResendOTP(ID string) (models.Otps, error) {
 
 	GetOTPCurrentUser.Value = GetRandNum
 	GetOTPCurrentUser.UsersID = ID
-	GetOTPCurrentUser.Expired = GetCurrentDateTime.Add(time.Minute * 5)
+	GetOTPCurrentUser.Expired = GetCurrentDateTime.Add(time.Minute * 15)
 
 	SaveOtps, err := s.repository.UpdateOTP(GetOTPCurrentUser)
 
@@ -61,6 +68,13 @@ func (s *service) ResendOTP(ID string) (models.Otps, error) {
 
 		return SaveOtps, err
 	}
+
+	SendMail := Email.SendEmail(FindUnregisteredUser.Name,SaveOtps.Value ,SaveOtps.Expired ,FindUnregisteredUser.Email)
+
+	if !SendMail{
+		return SaveOtps, errors.New("Failed send email, please make sure your email valid or request verification")
+	}
+
 
 	return SaveOtps, nil
 
@@ -88,7 +102,7 @@ func (s *service) CheckOTP(input OtpInput) (models.Otps, error) {
 	}
 
 	fmt.Printf("ini user otp %s", GetOtp.UsersID)
-	GetUser, err := s.UserRepositroy.FindUserById(GetOtp.UsersID)
+	GetUser, err := s.UserRepositroy.FindUserUnverifiedById(GetOtp.UsersID)
 
 	if err != nil {
 		return GetOtp, err

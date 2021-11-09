@@ -1,7 +1,12 @@
 package Company
 
 import (
+	"encoding/json"
+	"pasarwarga/apiformat"
+	"pasarwarga/fetch"
 	"pasarwarga/models"
+	"strconv"
+	"strings"
 )
 
 type CompanyFormatter struct {
@@ -20,8 +25,9 @@ type PositionFormatter struct {
 	//Count int `json:"candidate"`
 }
 type LocationDetail struct {
-	ID string `json:"id"`
-	DetailLocation string `json:"locationdetail"`
+	Id int `json:"id"`
+	Province string `json:"province"`
+	City string `json:"city"`
 }
 
 type CompanyType struct {
@@ -53,9 +59,34 @@ func FormatCompany(company models.Company) CompanyFormatter {
 	// GetOwner := CompanyOwner{}
 	// GetOwner.User = user.Name
 
-	// CompanyFormatter.User = GetOwner
+	// CompanyFormatter.User = GetOwner	
+	// LocationFormatter := []LocationDetail{}
+
+	
+	GetDetail := strconv.Itoa(company.LocationID)
+
+	GetLocation, err := fetch.LocationGet("api/daerahindonesia/kota/" + GetDetail)
+	
+	if err != nil {
+		return CompanyFormatter
+	}
+
+	var lokasi apiformat.GetFormatLokasiKota
+	err = json.Unmarshal(GetLocation, &lokasi)
+
+	if err != nil {
+		return CompanyFormatter
+	}
+	DetailLocationFormatter := LocationDetail{}
+	DetailLocationFormatter.Id = lokasi.Id
+	DetailLocationFormatter.Province = lokasi.Id_provinsi
+	city := strings.Replace(lokasi.Name,"Kabupaten ", "", -1)
+	DetailLocationFormatter.City = city
+
+
 
 	CompanyFormatter.Type = CompanyTypeFormatter
+	CompanyFormatter.LocationData = DetailLocationFormatter
 
 	
 
@@ -67,9 +98,8 @@ func FormatListCompany(listCompany []models.Company) []CompanyFormatter {
 	ListCompanyFormatter := []CompanyFormatter{}
 
 	for _, company := range listCompany {
-
 		CompanyFormatter := FormatCompany(company)
-		ListCompanyFormatter = append(ListCompanyFormatter, CompanyFormatter)
+		ListCompanyFormatter = append(ListCompanyFormatter, CompanyFormatter)		
 
 	}
 

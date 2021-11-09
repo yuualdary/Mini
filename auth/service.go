@@ -28,7 +28,7 @@ func (s *jwtService) GenerateToken(userID string) (string, error) {
 	//claim["user_id"] = userID //value dari user
 	atClaims["authorized"] = true
 	atClaims["user_id"] = userID
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	//token valid jika, dibuat dengan secret key
 	SignedToken, err := token.SignedString(SECRET_KEY)
