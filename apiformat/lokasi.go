@@ -15,7 +15,21 @@ type GetFormatLokasi struct {
 	Name string `json:"nama"`
 }
 
+type GetFormatLokasiKota struct {
+	Id          int    `json:"id"`
+	Id_provinsi string `json:"id_provinsi"`
+	Name        string `json:"nama"`
+}
 type DataLokasiKota struct {
 	MessageData
-	Data []GetFormatLokasi `json:"kota_kabupaten"`
+	Data []GetFormatLokasiKota `json:"kota_kabupaten"`
+}
+
+// type DataDetailLokasiKota struct {
+// 	MessageData
+// 	Data GetFormatLokasiKota `json:"data"`
+// }
+type DataListLokasiKota struct {
+	MessageData
+	Data []GetFormatLokasiKota `json:"data"`
 }

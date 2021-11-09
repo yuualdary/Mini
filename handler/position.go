@@ -165,7 +165,12 @@ func (h *PositionHandler) CreatePositionTag(c *gin.Context) {
 
 func (h *PositionHandler) ListPosition(c *gin.Context) {
 
-	ListPosition, err := h.PositionService.ListPosition()
+
+	input:= c.Query("input")
+	inputjobtag := c.Query("jobtag")
+	inputprovince := c.Query("province")
+	inputcity := c.Query("city")
+	ListPosition, err := h.PositionService.ListPosition(input,inputjobtag,inputprovince,inputcity)
 
 	if err != nil {
 

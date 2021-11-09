@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"pasarwarga/Candidate"
 	"pasarwarga/Company"
@@ -35,10 +36,43 @@ func (h *CandidateHandler) CreateCandidate(c *gin.Context) {
 		return
 	}
 
+	file, err := c.FormFile("file")
+
+	if file.Size > 1000000{
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("File Cannot More Than 1 MB", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload file image", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+
 	currentUser := c.MustGet("CurrentUser").(models.Users)
 	input.User = currentUser
+	userID := currentUser.ID
+	file.Filename = userID+".pdf"//change name
 
-	NewCandidate, err := h.CandidateService.CreateCandidate(input)
+	path := fmt.Sprintf("candidatepdf/%s", file.Filename)
+
+	err = c.SaveUploadedFile(file, path)
+
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	NewCandidate, err := h.CandidateService.CreateCandidate(input,path)
 
 	if err != nil {
 
@@ -163,7 +197,7 @@ func (h *CandidateHandler) ListUserApplication(c *gin.Context) {
 //todo
 //coba dibuat goroutinenya
 
-	GetCompany, err := h.CompanyService.ListCompany("")
+	GetCompany, err := h.CompanyService.ListCompany("","","","")
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)

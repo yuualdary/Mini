@@ -10,7 +10,7 @@ type Repository interface {
 	CreatePosiion(positiion models.Position) (models.Position, error)
 	UpdatePosition(position models.Position) (models.Position, error)
 	CreateTagPosition(positiontag models.PositionCategory)(models.PositionCategory, error)
-	ListPosition() ([]models.Position, error)
+	ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error)
 	ListCompanyPosition(CompanyID string)([]models.Position,error)
 	ListPositionTag(ID string)([]models.PositionCategory,error)
 	DetailPosition(ID string) (models.Position, error)
@@ -59,11 +59,14 @@ func (r *repository) UpdatePosition(positiion models.Position) (models.Position,
 	return positiion, nil
 }
 
-func (r *repository) ListPosition() ([]models.Position, error) {
+func (r *repository) ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error){
 
 	var position []models.Position
 
-	err := r.db.Preload("Companies").Preload("Candidates").Find(&position).Error
+
+	err := r.db.Debug().Joins("Companies").Preload("Candidates").Where("position_name LIKE ?", "%"+positionname+"%").Where("companies.location_id LIKE ?","%"+inputcity+"%").
+									Where("companies.location_province LIKE ?", "%"+inputprovince+"%").Where("category_id LIKE ?", "%"+inputjobtag+"%").
+									Find(&position).Error
 
 	if err != nil {
 		return []models.Position{}, err

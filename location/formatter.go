@@ -1,6 +1,10 @@
 package location
 
-import "pasarwarga/apiformat"
+import (
+	"pasarwarga/apiformat"
+	"strings"
+)
+
 
 type LocationFormatter struct {
 	Id   int    `json:"id"`
@@ -10,7 +14,7 @@ type LocationFormatter struct {
 
 type LocationCityFormatter struct{
 	Id int `json:"id"`
-	Id_provinsi int `json:"id_provinsi"`
+	Id_provinsi string `json:"id_provinsi"`
 	City string `json:"nama"`
 }
 
@@ -35,6 +39,33 @@ func DetailLocationFormatter(lokasi apiformat.GetFormatLokasi) LocationFormatter
 	return detailformatter
 
 }
+
+func ListLocationKotaFormatter(lokasi []apiformat.GetFormatLokasiKota) []LocationCityFormatter {
+
+	formatter := []LocationCityFormatter{}
+
+	for _, listlokasi := range lokasi{
+		Detailformatter := DetailLocationKotaFormatter(listlokasi)
+		formatter = append(formatter, Detailformatter)
+	}
+	return formatter
+}
+
+func DetailLocationKotaFormatter(lokasi apiformat.GetFormatLokasiKota) LocationCityFormatter {
+
+	detailformatter := LocationCityFormatter{}
+
+	detailformatter.Id = lokasi.Id
+	//fmt.Println(len(lokasi.Name))
+	detailformatter.Id_provinsi = lokasi.Id_provinsi
+	t := strings.Replace(lokasi.Name,"Kabupaten ", "", -1)
+	detailformatter.City = t
+
+
+	return detailformatter
+
+}
+
 
 
 

@@ -11,7 +11,7 @@ import (
 )
 
 type Service interface {
-	CreateCandidate(input CreateCandidateInput) (models.Candidate, error)
+	CreateCandidate(input CreateCandidateInput, file string) (models.Candidate, error)
 	ListCandidate(inputid DetailCandidateInput) ([]models.Candidate, error)
 	UpdateCandidateStatus(inputid DetailCandidateInput, input CreateCandidateInput) (models.Candidate, error)
 	CheckOwnerValidation(ID string, CompanyID string) (bool, error)
@@ -31,7 +31,7 @@ func NewService(repository Repository, UserRepository Users.Repository, Position
 	return &service{repository, UserRepository, PositionRepository, CompanyRepository}
 }
 
-func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate, error) {
+func (s *service) CreateCandidate(input CreateCandidateInput, file string) (models.Candidate, error) {
 
 	FindUser, err := s.UserRepository.FindUserById(input.User.ID)
 
@@ -51,10 +51,12 @@ func (s *service) CreateCandidate(input CreateCandidateInput) (models.Candidate,
 
 	CreateCandidate := models.Candidate{}
 	CreateCandidate.ID = generatornumber.NewUUID()
+	CreateCandidate.CandidateFile = file
 	CreateCandidate.CategoryID = input.CategoryID
 	CreateCandidate.PositionID = input.PositionID
 	CreateCandidate.UserID = FindUser.ID
 	CreateCandidate.UpdatedByID = FindUser.ID
+
 	//buat validasi gabisa apply 2x done;
 	//detail list cabdidate, formatter total
 	//buat pdfnya

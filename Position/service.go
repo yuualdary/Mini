@@ -13,7 +13,7 @@ type Service interface {
 	CreatePosition(input CreatePositionInput) (models.Position, error)
 	UpdatePosition(inputid DetailPositionInput, inputdata CreatePositionInput) (models.Position, error)
 	CreateTagPosition(inputid DetailPositionInput, inputtag CreateTagPosition) (models.PositionCategory,error)
-	ListPosition() ([]models.Position, error)
+	ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error)
 	ListCompanyPosition(CompanyID string) ([]models.Position, error)
 	DetailPosition(inputid DetailPositionInput) (models.Position, error)
 	DeletePosition(input DetailPositionInput) error
@@ -150,9 +150,9 @@ func (s *service) UpdatePosition(inputid DetailPositionInput, inputdata CreatePo
 	return Update, nil
 }
 
-func (s *service) ListPosition() ([]models.Position, error) {
+func (s *service) ListPosition(positionname string, inputjobtag string, inputprovince string, inputcity string) ([]models.Position, error) {
 
-	GetList, err := s.repository.ListPosition()
+	GetList, err := s.repository.ListPosition(positionname,inputjobtag,inputprovince,inputcity)
 
 	if err != nil {
 		return GetList, err
@@ -190,6 +190,13 @@ func (s *service) DeletePosition(input DetailPositionInput) error {
 
 		return errors.New("Not an owner")
 	}
+
+	//Check Candidate Exist
+
+	if len(FindDetail.Candidates) != 0 {
+		return errors.New("Cannot delete because you already have candidate")
+	}
+
 	return nil
 
 }

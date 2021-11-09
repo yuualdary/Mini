@@ -119,15 +119,20 @@ func (h *CompanyHandler) DetailCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	//fmt.Println(lokasi)
 	response := helper.APIResponse("Detail Company Data", http.StatusOK, "success", Company.FormatCompany(FindDetail))
 	c.JSON(http.StatusOK, response)
 }
 func (h *CompanyHandler) ListCompany(c *gin.Context) {
 
-	input := c.Query("companyname")
+	input:= c.Query("input")
+	inputjobtag := c.Query("jobtag")
+	inputprovince := c.Query("province")
+	inputcity := c.Query("city")
 	// input := err
-	fmt.Println(input)
-	ListAllCompany, err := h.CompanyService.ListCompany(input)
+//	fmt.Println(input)
+	ListAllCompany, err := h.CompanyService.ListCompany(input,inputjobtag,inputprovince,inputcity)
 
 	if err != nil {
 
@@ -138,6 +143,7 @@ func (h *CompanyHandler) ListCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	
 	response := helper.APIResponse("List Company", http.StatusOK, "success", Company.FormatListCompany(ListAllCompany))
 	c.JSON(http.StatusOK, response)
 

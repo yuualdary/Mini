@@ -1,7 +1,12 @@
 package Position
 
 import (
+	"encoding/json"
+	"pasarwarga/apiformat"
+	"pasarwarga/fetch"
 	"pasarwarga/models"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -27,6 +32,7 @@ type PositionFormatter struct {
 	ID                  string      `json:"id"`
 	PositionName        string      `json:"positionname"`
 	Company             CompanyName `json:"company"`
+	Location LocationDetail `json:"location"`
 	Count int `json:"candidate"`
 }
 
@@ -38,6 +44,7 @@ type DetailPositionFormatter struct{
 	PositionRequirement string `json:"requirement"`
 	PositionLength int `json:"length"`
 	Company             CompanyName `json:"company"`
+	Location LocationDetail `json:"location"`
 	CompanyType CompanyType `json:"type"`
 	Tag	[]PositionTag `json:"tag"`
 	Count int `json:"candidate"`
@@ -46,8 +53,8 @@ type DetailPositionFormatter struct{
 //buat gaji,buat validasi input, formatter lain, tambahin RP di gaji
 
 type LocationDetail struct {
-	ID string `json:"id"`
-	DetailLocation string `json:"locationdetail"`
+	ID int `json:"id"`
+	LocationName string `json:"location"`
 }
 type PositionTag struct{
 	ID          string `json:"id"`
@@ -71,7 +78,7 @@ type CandidateCount struct{
 }
 
 
-func FormatCompany(position []models.Position, location []models.Locations) CompanyFormatter {
+func FormatCompany(position []models.Position) CompanyFormatter {
 
 	CompanyFormatter := CompanyFormatter{}
 
@@ -81,19 +88,12 @@ func FormatCompany(position []models.Position, location []models.Locations) Comp
 		CompanyFormatter.ID = position[0].Companies.ID
 		CompanyFormatter.CompanyName =   position[0].Companies.CompanyName
 		CompanyFormatter.CompanyDescription = position[0].Companies.CompanyDescription
-		CompanyFormatter.Location.ID = position[0].Companies.LocationID
+		// CompanyFormatter.Location.ID = position[0].Companies.LocationID
 
 
 	}
 
-	for _, locationlist := range location{
-
-		if locationlist.ID == CompanyFormatter.Location.ID{
-			CompanyFormatter.Location.DetailLocation = locationlist.LocationCity
-
-		}
-	} 
-
+ 
 
 	PositionCompany := []SubPositionFormatter{}
 
@@ -118,7 +118,7 @@ func FormatCompanyListGtine(position []models.Position, location []models.Locati
 	x :=CompanyFormatter{}
 
 	go func ()  {
-			x = FormatCompany(position,location)
+			x = FormatCompany(position)
 		//	fmt.Println(x)
 
 	}()
@@ -161,7 +161,28 @@ func FormatDetailPosition(position models.Position, category []models.Category) 
 	companyname.CompanyName = company.CompanyName
 	DetailPositionFormatter.Company = companyname
 
+	
+	GetDetail := strconv.Itoa(company.LocationID)
 
+	GetLocation, err := fetch.LocationGet("api/daerahindonesia/kota/" + GetDetail)
+	
+	if err != nil {
+		return DetailPositionFormatter
+	}
+
+	var lokasi apiformat.GetFormatLokasiKota
+	err = json.Unmarshal(GetLocation, &lokasi)
+
+	if err != nil {
+		return DetailPositionFormatter
+	}
+
+	locationformatter := LocationDetail{}
+	locationformatter.ID = lokasi.Id
+	city := strings.Replace(lokasi.Name,"Kabupaten ", "", -1)
+	locationformatter.LocationName = city
+
+	DetailPositionFormatter.Location = locationformatter
 
 	if position.CompanyID != "" {
 
@@ -238,6 +259,27 @@ func FormatListPosition(position models.Position) PositionFormatter {
 	companyname.CompanyName = company.CompanyName
 	PositionFormatter.Company = companyname
 
+	GetDetail := strconv.Itoa(company.LocationID)
+
+	GetLocation, err := fetch.LocationGet("api/daerahindonesia/kota/" + GetDetail)
+	
+	if err != nil {
+		return PositionFormatter
+	}
+
+	var lokasi apiformat.GetFormatLokasiKota
+	err = json.Unmarshal(GetLocation, &lokasi)
+
+	if err != nil {
+		return PositionFormatter
+	}
+
+	locationformatter := LocationDetail{}
+	locationformatter.ID = lokasi.Id
+	city := strings.Replace(lokasi.Name,"Kabupaten ", "", -1)
+	locationformatter.LocationName = city
+
+	PositionFormatter.Location = locationformatter
 
 	if (len(position.Candidates)>0){
 

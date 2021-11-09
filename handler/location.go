@@ -117,7 +117,7 @@ func (h *LocationHandler) ListLocationCity(c *gin.Context) {
 		return
 	}
 	
-	response := helper.APIResponse("List Location", http.StatusOK, "success", location.ListLocationFormatter(lokasi.Data))
+	response := helper.APIResponse("List Location", http.StatusOK, "success", location.ListLocationKotaFormatter(lokasi.Data))
 	c.JSON(http.StatusOK, response)
 }
 func (h *LocationHandler) UpdateLocation(c *gin.Context) {
